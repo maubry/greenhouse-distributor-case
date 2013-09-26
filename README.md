@@ -1,4 +1,4 @@
 greenhouse-distributor-case
 ===========================
 
-Wonderfull app
+Wonderful app.
