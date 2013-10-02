@@ -1,38 +1,47 @@
-/**
- * Module dependencies.
- */
-
+// Modules dependencies
+// ---------------------------
 var express = require('express');
 var routes = require('./routes');
-var user = require('./routes/user');
+var login = require('./routes/login');
 var system = require('./routes/system');
 var http = require('http');
 var path = require('path');
 
 var app = express();
 
-// all environments
+// set environments variables
+// ---------------------------
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Configure middleware
+// ---------------------------
+// app.use(express.favicon());           // ultra caching favicon (/public/favicon.ico)
+app.use(express.logger('dev'));          // log all request
+app.use(express.bodyParser());           // parses the request body and creates the req.body object 
+app.use(express.cookieParser());         // get cookies from user agent and creates the req.cookies object
+app.use(express.session({ secret : "2e0e1250-26bf-11e3-8224-0800200c9a66"})); // manage session and create a req.session object
+// app.use(express.methodOverride());    // to use shortcut app.put and app.delete
+app.use(app.router);                     // handle request on app.get() and app.post()
+app.use(express.static(path.join(__dirname, 'public'))); // serve static resource
 
 // development only
 if ('development' == app.get('env')) {
-	app.use(express.errorHandler());
+	console.log('Development Mode ON !');
+	app.use(express.errorHandler()); // show error as response
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/systems', system.list);
+// Define routes
+// ---------------------------
+app.get('/login', login.login.get);
+app.post('/login', login.login.post);
 
+app.get('/', login.checkAuth, routes.index);
+app.get('/systems', login.checkAuth, system.list);
+
+// create server
+// ---------------------------
 http.createServer(app).listen(app.get('port'), function() {
 	console.log('Express server listening on port ' + app.get('port'));
 });

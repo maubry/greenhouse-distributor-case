@@ -7,12 +7,12 @@ var http = require('https');
 var mod = require('forEachAsync');
 
 // get systems
-function getSystemDatas(system, next) {
+function getSystemDatas(system, next,accesstoken) {
 
 	var options = {
 		host : 'qa-trunk.airvantage.net',
 		path : '/api/v1/systems/' + system.uid
-				+ '/data?ids=temperature&access_token=?',
+				+ '/data?ids=temperature&access_token='+accesstoken,
 		method : 'GET'
 	};
 	console.log("request: " + options.host + options.path);
@@ -37,7 +37,7 @@ exports.list = function(pagerequest, pageresponse) {
 
 	var options = {
 		host : 'qa-trunk.airvantage.net',
-		path : '/api/v1/systems?fields=uid,name,lastCommDate&access_token=?',
+		path : '/api/v1/systems?fields=uid,name,lastCommDate&access_token='+pagerequest.session.access_token,
 		method : 'GET'
 	};
 	console.log("request: " + options.host + options.path);
@@ -52,7 +52,7 @@ exports.list = function(pagerequest, pageresponse) {
 
 			// request all the temperatures
 			mod.forEachAsync(systems, function(next, element, index, array) {
-				getSystemDatas(element, next);
+				getSystemDatas(element, next, pagerequest.session.access_token);
 
 				// then after all of the elements have been handled
 				// the final callback fires to let you know it's all done
