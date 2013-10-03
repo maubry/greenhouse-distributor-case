@@ -1,8 +1,9 @@
 <%- include header.ejs %>
-
-
-<div class="container">
 	<div class="row">
+		<ol class="breadcrumb">
+	  		<li><a href="/systems">Systems</a></li>
+	  		<li class="active"><%= system.name %></li>
+		</ol>
 		<div class="col-lg-12">
 			<p><%= system.name %><small><% system.uid %></small></p>
 		</div>
@@ -10,10 +11,6 @@
   	<div class="row">
 		<div class="col-lg-12">
 			<div id="chart"></div>
-			</div>
 		</div>
 	</div>
-</div>
-
-
 <%- include footer.ejs %>

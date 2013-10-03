@@ -1,4 +1,17 @@
-<%- include header.ejs %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Greenhouse
+			<% if (typeof title !='undefined') { %> 
+			   - <%= title %>
+			<%}%>
+		</title>
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+		<link rel='stylesheet' href='/stylesheets/style.css' />
+	</head>
+	<body>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
@@ -30,4 +43,6 @@
 			</div>
 		</div>
 	</div>
-<%- include footer.ejs %>
+  </body>
+  <script	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</html>

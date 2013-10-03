@@ -37,6 +37,7 @@ if ('development' == app.get('env')) {
 // ---------------------------
 app.get('/login', login.signin.get);
 app.post('/login', login.signin.post);
+app.post('/logout', login.signout.post);
 
 app.get('/', login.checkAuth, routes.index);
 app.get('/systems', login.checkAuth, system.list);
