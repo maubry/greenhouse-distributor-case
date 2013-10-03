@@ -6,9 +6,11 @@
 			    <h1>Systems list:</h1>
 			    <div class="list-group">
 				    <% for(var i=0; i<systems.length; i++) { %>
-				    	<a href="/systemdetail?uid=<%= systems[i].uid %>" class="list-group-item">
+				    	<a href="/systems/systemDetails?uid=<%= systems[i].uid %>" class="list-group-item">
 				    	 	<h3><%= systems[i].name %></h3>
-				    	 	<p><i>Temperature:</i> <%= systems[i].temperature %>°C</p>
+				    	 	<p><i>Temperature:</i> <%= ("temperature" in systems[i]) ? systems[i].temperature+'°C' : 'none' %></p>
+				    	 	<p><i>Humidity:</i> <%= ("humidity" in systems[i]) ? systems[i].humidity+'%' : 'none' %></p>
+				    	 	<p><i>Luminosity:</i> <%= ("luminosity" in systems[i]) ? systems[i].luminosity+' Lux' : 'none' %></p>
 				    	 	<p><i>Last comm date:</i> <%= new Date( systems[i].lastCommDate).toString() %></p>
 				    	</a>
 				    <% } %>

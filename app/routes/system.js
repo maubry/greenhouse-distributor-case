@@ -12,7 +12,7 @@ function getSystemDatas(system, next,accesstoken) {
 	var options = {
 		host : 'qa-trunk.airvantage.net',
 		path : '/api/v1/systems/' + system.uid
-				+ '/data?ids=temperature&access_token='+accesstoken,
+				+ '/data?ids=greenhouse.data.temperature,greenhouse.data.luminosity,greenhouse.data.humidity&access_token='+accesstoken,
 		method : 'GET'
 	};
 	console.log("request: " + options.host + options.path);
@@ -21,7 +21,16 @@ function getSystemDatas(system, next,accesstoken) {
 		res.setEncoding('utf8');
 		res.on('data', function(data) {
 			data = JSON.parse(data);
-			system.temperature = data.temperature[0].value;
+			console.log(data);
+			if ("greenhouse.data.temperature" in data && data["greenhouse.data.temperature"] !== null){
+				system.temperature = data["greenhouse.data.temperature"][0].value;
+			}
+			if ("greenhouse.data.luminosity" in data && data["greenhouse.data.luminosity"] !==null ){
+				system.luminosity = data["greenhouse.data.luminosity"][0].value;
+			}
+			if ("greenhouse.data.humidity" in data && data["greenhouse.data.humidity"] !== null){
+				system.humidity = data["greenhouse.data.humidity"][0].value;
+			}
 			next();
 		});
 	});
