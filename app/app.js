@@ -34,8 +34,8 @@ if ('development' == app.get('env')) {
 
 // Define routes
 // ---------------------------
-app.get('/login', login.login.get);
-app.post('/login', login.login.post);
+app.get('/login', login.signin.get);
+app.post('/login', login.signin.post);
 
 app.get('/', login.checkAuth, routes.index);
 app.get('/systems', login.checkAuth, system.list);
