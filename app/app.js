@@ -4,6 +4,7 @@ var express = require('express');
 var routes = require('./routes');
 var login = require('./routes/login');
 var system = require('./routes/system');
+var map = require('./routes/map');
 var systemDetails = require('./routes/systemDetails');
 var http = require('http');
 var path = require('path');
@@ -41,6 +42,7 @@ app.post('/logout', login.signout.post);
 
 app.get('/', login.checkAuth, routes.index);
 app.get('/systems', login.checkAuth, system.list);
+app.get('/map', login.checkAuth, map.display);
 app.get('/systems/systemDetails', login.checkAuth, systemDetails.display);
 
 // create server

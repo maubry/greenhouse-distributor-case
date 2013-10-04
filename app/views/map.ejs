@@ -1,0 +1,91 @@
+<%- include header.ejs %>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-body" style="padding: 0px;">
+				<div id="map-canvas" style="height: 800px;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div hidden>
+	<div id="markers">
+		<% for(var i=0; i<systems.length; i++) { %>
+		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
+			<circle r="7" cx="10" cy="10" style="fill: #d9534f;"/>
+			<text x="19" y="10" dy=".31em" style="color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].name %></text>
+		</svg>
+		<% } %>
+	</div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdutCfjSUWBijyebze1ZoTzAhapZugD6Y&sensor=false"></script>
+
+<script type="text/javascript">
+
+var systems = <%- JSON.stringify(systems) %>;
+
+var mapOptions = {
+	center: new google.maps.LatLng(systems[0].data.latitude, systems[0].data.longitude),
+	zoom: 15,
+	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	streetViewControl: false,
+	mapTypeControl: false,
+	styles: [
+	{
+		stylers: [
+		{ saturation: -100 },
+		{ lightness: 30 }
+		]
+	},{
+		featureType: "road",
+		elementType: "geometry",
+		stylers: [
+		{ lightness: 70 },
+		{ visibility: "simplified" }
+		]
+	},{
+		featureType: "road",
+		elementType: "labels",
+		stylers: [
+		{ visibility: "simplified" }
+		]
+	}
+	]
+};
+
+
+var map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+
+var overlay = new google.maps.OverlayView();
+
+var layer
+
+
+
+overlay.onAdd = function() {
+	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
+	layer = $("#greenhouseContainers").css("position", "absolute");
+	for(var i=0; i<systems.length; i++) {
+		layer.append($("#markers #"+systems[i].uid));
+	}
+}
+
+overlay.draw = function() {
+	var projection = this.getProjection();
+	var d 
+	for(var i=0; i<systems.length; i++) {
+		d = new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude);
+		d = projection.fromLatLngToDivPixel(d);
+		$("#"+systems[i].uid).css("left", (d.x - 10) + "px").css("top", (d.y - 10) + "px")
+	}
+};
+
+overlay.setMap(map);
+
+</script>
+
+<%- include footer.ejs %>
