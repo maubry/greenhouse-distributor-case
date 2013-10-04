@@ -6,6 +6,9 @@ var https = require('https');
  * Manage login/authentication Redirect on login page if there aren't access_token in current session
  */
 exports.checkAuth = function(req, res, next) {
+	// save the original URL in case we redirect to the login page
+	// to allow it to return to the requested page
+	req.session.originalUrl = req.originalUrl; 
 	if (!req.session.access_token) {
 		// to access-token, we go to the login page
 		res.redirect('/login');
@@ -89,7 +92,10 @@ exports.signin.post = function(req, res,next) {
 					req.session.access_token = token.access_token;
 					req.session.refresh_token = token.refresh_token;
 					req.session.expires_at = new Date().getTime() + token.expires_in * 1000;
-					res.redirect('/');
+					if (req.session.originalUrl)
+						res.redirect(req.session.originalUrl);
+					else
+						res.redirect('/');
 				} else if (resp.statusCode == 400) {
 					// on error, display login page with error message
 					var error = JSON.parse(chunk);
