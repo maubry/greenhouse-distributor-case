@@ -1,4 +1,5 @@
 <%- include header.ejs %>
+
 	<div class="row">
 		<ol class="breadcrumb">
 	  		<li><a href="/systems">Systems</a></li>
@@ -8,9 +9,134 @@
 			<p><%= system.name %><small><% system.uid %></small></p>
 		</div>
 	</div>
-  	<div class="row">
+
+	<div class="row">
 		<div class="col-lg-12">
-			<div id="chart"></div>
+			<h1><%= system.name %></h1><small><%= system.uid %></small>
 		</div>
 	</div>
+	
+  	<div class="row">
+		<div class="col-lg-12">
+			<div id="chart_container">
+				<div id="axis0"></div>
+				<div id="axis1"></div>
+				<div id="axis2"></div>
+				<div id="chart"></div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div id="graph"></div>			
+		</div>
+	</div>
+
 <%- include footer.ejs %>
+
+<script>
+
+var palette = new Rickshaw.Color.Palette();
+
+scales = [];
+
+
+data = [<%- JSON.stringify(system.temperature) %>, <%- JSON.stringify(system.luminosity)%>, <%- JSON.stringify(system.humidity)%>];
+
+_ref = data[1];
+for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+  point = _ref[_j];
+  point.y *= point.y;
+}
+
+for (_k = 0, _len1 = data.length; _k < _len1; _k++) {
+  series = data[_k];
+  min = Number.MAX_VALUE;
+  max = Number.MIN_VALUE;
+  for (_l = 0, _len2 = series.length; _l < _len2; _l++) {
+    point = series[_l];
+    min = Math.min(min, point.y);
+    max = Math.max(max, point.y);
+  }
+  if (_k === 0) {
+    scales.push(d3.scale.linear().domain([min, max]).nice());
+  } else {
+    scales.push(d3.scale.pow().domain([min, max]).nice());
+  }
+}
+
+var graph = new Rickshaw.Graph({
+	element: document.querySelector("#chart"),
+	renderer: 'line',
+	series: [{
+		name: "Temperature",
+		data: data[0],
+		color: palette.color(),
+		 scale: scales[0]
+	},{
+		name: "Luminosity",
+		data: data[1],
+		color: palette.color(),
+		 scale: scales[1]
+	},{
+		name: "Humidity",
+		data: data[2],
+		color: palette.color(),
+		scale: scales[2]
+	}]
+});
+
+
+var time = new Rickshaw.Fixtures.Time();
+var timeunit = time.unit('hour');
+
+var xAxis = new Rickshaw.Graph.Axis.Time({
+    graph: graph,
+    timeUnit : timeunit
+});
+xAxis.render();
+
+new Rickshaw.Graph.Axis.Y.Scaled({
+  element: document.getElementById('axis0'),
+  graph: graph,
+  grid: false,
+  orientation: 'left',
+  scale: scales[0],
+  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
+
+new Rickshaw.Graph.Axis.Y.Scaled({
+  element: document.getElementById('axis1'),
+  graph: graph,
+  grid: false,
+  orientation: 'left',
+  scale: scales[1],
+  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
+
+new Rickshaw.Graph.Axis.Y.Scaled({
+  element: document.getElementById('axis2'),
+  graph: graph,
+  grid: false,
+  orientation: 'left',
+  scale: scales[2],
+  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
+
+var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+    graph: graph
+} );
+
+var legend = new Rickshaw.Graph.Legend({
+    graph: graph,
+    element: document.querySelector('#graph')
+});
+
+var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+    graph: graph,
+    legend: legend
+});
+
+graph.render();
+
+</script>

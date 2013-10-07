@@ -21,7 +21,6 @@ function getSystemDatas(system, next,accesstoken) {
 		res.setEncoding('utf8');
 		res.on('data', function(data) {
 			data = JSON.parse(data);
-			console.log(data);
 			if ("greenhouse.data.temperature" in data && data["greenhouse.data.temperature"] !== null){
 				system.temperature = data["greenhouse.data.temperature"][0].value;
 			}
