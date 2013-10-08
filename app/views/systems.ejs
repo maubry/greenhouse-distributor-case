@@ -1,19 +1,20 @@
 <%- include header.ejs %>
-	   	<div class="row">
-			<div class="col-lg-12">
-			    <div class="list-group">
-				    <% for(var i=0; i<systems.length; i++) { %>
-				    	<a href="/systems/systemDetails?uid=<%= systems[i].uid %>" class="list-group-item">
-				    	 	<h3><%= systems[i].name %></h3>
-				    	 	<p><i>Temperature:</i> <%= ("temperature" in systems[i]) ? systems[i].temperature+'°C' : 'none' %></p>
-				    	 	<p><i>Humidity:</i> <%= ("humidity" in systems[i]) ? systems[i].humidity+'%' : 'none' %></p>
-				    	 	<p><i>Luminosity:</i> <%= ("luminosity" in systems[i]) ? systems[i].luminosity+' Lux' : 'none' %></p>
-				    	 	<p><i>Last comm date:</i> <%= new Date( systems[i].lastCommDate).toString() %></p>
-				    	</a>
-				    <% } %>
-			    </div>
-		    </div>
-	    </div>
 <div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+			<table class="table">
+				<!-- <tr><th>Name</th><th>Temperature</th><th>Humidity</th><th>Luminosity</th><th>Last Com</th></tr> -->
+				<% for(var i=0; i<systems.length; i++) { %>
+				<tr>
+					<td><a href="/systems/systemDetails?uid=<%= systems[i].uid %>"><%= systems[i].name %></a></td>
+					<td><span class="label label-success"><%= ("temperature" in systems[i]) ? parseFloat(systems[i].temperature).toFixed(2)+' °C' : 'none' %></span></td>
+					<td><span class="label label-warning"><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></span></td>
+					<td><span class="label label-danger"><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></span></td>
+					<td><span class="label label-success"><%= new Date( systems[i].lastCommDate).toString() %></span></td>
+				</tr>
+				<% } %>
+			</table>
+		</div>
+	</div>
 </div>
 <%- include footer.ejs %>
