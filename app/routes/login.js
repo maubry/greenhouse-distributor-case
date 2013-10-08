@@ -67,7 +67,7 @@ exports.signin = {};
 
 /** render login page */
 exports.signin.get = function(req, res) {
-	res.render('login', {title : "login"});
+	res.render('login', {});
 };
 
 /** try get access_token for AirVantage */
@@ -100,7 +100,6 @@ exports.signin.post = function(req, res,next) {
 					// on error, display login page with error message
 					var error = JSON.parse(chunk);
 					res.render('login', {
-						title : "login",
 						errormsg : error.error_description,
 					});
 				}else{
@@ -127,5 +126,5 @@ exports.signout.post = function(req, res) {
 	req.session.access_token = null;
 	req.session.refresh_token = null;
 	req.session.expires_at = null;
-	res.render('login', {title : "login"});
+	res.render('login', {});
 };
