@@ -30,9 +30,13 @@
 
 var systems = <%- JSON.stringify(systems) %>;
 
+var bound = new google.maps.LatLngBounds();
+
+for (i = 0; i < systems.length; i++) {
+  bound.extend( new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude) );
+}
+
 var mapOptions = {
-	center: new google.maps.LatLng(systems[0].data.latitude, systems[0].data.longitude),
-	zoom: 15,
 	mapTypeId: google.maps.MapTypeId.ROADMAP,
 	streetViewControl: false,
 	mapTypeControl: false,
@@ -59,8 +63,9 @@ var mapOptions = {
 	]
 };
 
-
 var map = new google.maps.Map($("#map-canvas")[0], mapOptions);
+
+map.fitBounds(bound)
 
 var overlay = new google.maps.OverlayView();
 
