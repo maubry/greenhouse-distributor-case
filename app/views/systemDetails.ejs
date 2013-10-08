@@ -4,25 +4,18 @@
 
 	<div class="row">
 		<div class="col-lg-12">
+			<div class="page-header">
+				<h1><%= system.name %> <small class="pull-right"><%= system.uid %></small></h1>
+			</div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h1><%= system.name %></h1><small><%= system.uid %></small>
+			<div id="chart" class="rickshaw_graph"></div>
 		</div>
 	</div>
-	
-  	<div class="row">
-		<div class="col-lg-12">
-			<div id="chart_container">
-				<div id="axis0"></div>
-				<div id="axis1"></div>
-				<div id="axis2"></div>
-				<div id="chart"></div>
-			</div>
-		</div>
-	</div>
+	<p/>
 	<div class="row">
 		<div class="col-lg-12">
 			<div id="graph"></div>			
@@ -31,9 +24,7 @@
 	<p/>
 </div>
 
-<%- include footer.ejs %>
-
-<script>
+<script type="text/javascript">
 
 var palette = new Rickshaw.Color.Palette();
 
@@ -66,61 +57,64 @@ for (_k = 0, _len1 = data.length; _k < _len1; _k++) {
 
 var graph = new Rickshaw.Graph({
 	element: document.querySelector("#chart"),
-	renderer: 'line',
+	renderer: 'multi',
 	series: [{
-		name: "Temperature",
-		data: data[0],
-		color: palette.color(),
-		 scale: scales[0]
-	},{
 		name: "Luminosity",
 		data: data[1],
 		color: palette.color(),
-		 scale: scales[1]
+		scale: scales[1],
+		renderer: "bar"
 	},{
 		name: "Humidity",
 		data: data[2],
 		color: palette.color(),
-		scale: scales[2]
+		scale: scales[2],
+		renderer: "bar"
+	},{
+		name: "Temperature",
+		data: data[0],
+		color: palette.color(),
+		scale: scales[0],
+		renderer: "line"
 	}]
 });
 
 
 var time = new Rickshaw.Fixtures.Time();
-var timeunit = time.unit('hour');
+//var timeunit = time.unit('hours');
 
 var xAxis = new Rickshaw.Graph.Axis.Time({
     graph: graph,
-    timeUnit : timeunit
+    //timeUnit : timeunit
 });
-xAxis.render();
+
 
 new Rickshaw.Graph.Axis.Y.Scaled({
-  element: document.getElementById('axis0'),
+  //element: document.getElementById('axis0'),
   graph: graph,
-  grid: false,
-  orientation: 'left',
+  grid: true,
+  orientation: 'right',
   scale: scales[0],
   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
 });
 
-new Rickshaw.Graph.Axis.Y.Scaled({
-  element: document.getElementById('axis1'),
-  graph: graph,
-  grid: false,
-  orientation: 'left',
-  scale: scales[1],
-  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-});
+// new Rickshaw.Graph.Axis.Y.Scaled({
+//   //element: document.getElementById('axis1'),
+//   graph: graph,
+//   grid: false,
+//   orientation: 'right',
+//   scale: scales[1],
+//   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+// });
 
-new Rickshaw.Graph.Axis.Y.Scaled({
-  element: document.getElementById('axis2'),
-  graph: graph,
-  grid: false,
-  orientation: 'left',
-  scale: scales[2],
-  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-});
+// new Rickshaw.Graph.Axis.Y.Scaled({
+//   element: document.getElementById('axis2'),
+//   graph: graph,
+//   grid: false,
+//   orientation: 'left',
+//   scale: scales[2],
+//   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+// });
 
 var hoverDetail = new Rickshaw.Graph.HoverDetail( {
     graph: graph
