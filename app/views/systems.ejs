@@ -1,9 +1,6 @@
 <%- include header.ejs %>
 	   	<div class="row">
 			<div class="col-lg-12">
-				<ol class="breadcrumb">
-	  				<li class="active">Systems</li>
-				</ol>
 			    <div class="list-group">
 				    <% for(var i=0; i<systems.length; i++) { %>
 				    	<a href="/systems/systemDetails?uid=<%= systems[i].uid %>" class="list-group-item">
@@ -17,4 +14,6 @@
 			    </div>
 		    </div>
 	    </div>
+<div class="container">
+</div>
 <%- include footer.ejs %>

@@ -1,26 +1,50 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Greenhouse
-			<% if (typeof title !='undefined') { %> 
-			   - <%= title %>
-			<%}%>
-		</title>
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
-		<link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.3.0/rickshaw.min.css' />
-		<link rel='stylesheet' href='/stylesheets/style.css' />
-	</head>
-	<body>
+
+<head>
+	<title>Pirita</title>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+	<link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.3.0/rickshaw.min.css' />
+	<link rel='stylesheet' href='/stylesheets/style.css'/>
+
+	<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+	<script	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<script	src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+	<script	src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.3.0/rickshaw.min.js"></script>
+
+</head>
+
+<body style="padding-top: 70px;">
+
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="container">
-	  		<div class="header ">
-	  			<div class="pull-right">
-	  				<form method="post" action="/logout">
-						<button class="btn btn-default" type="submit">
-							<span class="glyphicon icon-signout"></span> Sign out
-						</button>
-					</form> 
-				</div>
-	  			<h1 class="text-muted">Viva Pinata</h1>
-      		</div>
+			
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/">Pirita</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse navbar-ex1-collapse" style="padding-right: 0px;">
+				<ul class="nav navbar-nav">
+					<li <%= (active == "systems") ? "class=active" : "" %>><a href="/systems">Systems</a></li>
+					<li <%= (active == "map") ? "class=active" : "" %>><a href="/map">Map</a></li>
+				</ul>
+				<form class="navbar-form navbar-right" role="sign-out" style="padding-right: 0px;">
+					<button class="btn btn-default pull-right" type="submit">
+						<span class="glyphicon icon-signout"></span> Sign out
+					</button>
+				</form>
+			</div><!-- /.navbar-collapse -->
+
+		</div>
+	</nav>

@@ -64,7 +64,8 @@ exports.display = function(pagerequest, pageresponse) {
 			}).then(function() {
 				console.log('All requests have finished');
 				pageresponse.render('systemDetails', {
-					system : system
+					system : system,
+					active : "systems"
 				});
 			});
 		});

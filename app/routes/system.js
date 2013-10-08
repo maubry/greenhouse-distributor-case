@@ -67,7 +67,8 @@ exports.list = function(pagerequest, pageresponse) {
 			}).then(function() {
 				console.log('All requests have finished');
 				pageresponse.render('systems', {
-					systems : systems
+					systems : systems,
+					active : "systems"
 				});
 			});
 

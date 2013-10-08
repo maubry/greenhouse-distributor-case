@@ -24,7 +24,8 @@ exports.display = function(pagerequest, pageresponse) {
 				systems.push(data.items[i]);
 			}
 			pageresponse.render('map', {
-				systems : systems
+				systems : systems,
+				active : "map"
 			});
 		});
 	});
