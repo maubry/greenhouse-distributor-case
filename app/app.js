@@ -27,6 +27,7 @@ app.use(express.session({ secret : "2e0e1250-26bf-11e3-8224-0800200c9a66"})); //
 // app.use(express.methodOverride());    // to use shortcut app.put and app.delete
 app.use(app.router);                     // handle request on app.get() and app.post()
 app.use(express.static(path.join(__dirname, 'public'))); // serve static resource
+app.use(express.static(path.join(__dirname, 'bower_components'))); // serve static resource
 
 // development only
 if ('development' == app.get('env')) {
