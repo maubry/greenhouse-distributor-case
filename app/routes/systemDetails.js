@@ -33,6 +33,7 @@ function getDatas(element, next, system, access_token) {
 		});
 	req.on('error', function(e) {
 		console.log("Error while requesting datas");
+		next();
 	});
 	req.end();
 }
@@ -56,18 +57,41 @@ exports.display = function(pagerequest, pageresponse) {
 			data = JSON.parse(data);
 			system.name = data.items[0].name;
 			
-			mod.forEachAsync(["temperature","luminosity","humidity"], function(next, element, index, array) {
-				getDatas(element, next, system, pagerequest.session.access_token);
+			//get the alerts on the system if any
+			var options = {
+				host : 'qa-trunk.airvantage.net',
+				path : '/api/v1/alerts?target=' + system.uid + '&fields=uid,target,rule,date,acknowledgedAt&access_token=' + pagerequest.session.access_token,
+				method : 'GET'
+			};
+			console.log("request: " + options.host + options.path);
+			
+			http.request(options, function(res) {
+				res.setEncoding('utf8');
+				res.on('data', function(data) {
+					data = JSON.parse(data);
+					
+					system.alerts = data.items;
+					
+					//get the historicals datas
+					mod.forEachAsync(["temperature","luminosity","humidity"], function(next, element, index, array) {
+						getDatas(element, next, system, pagerequest.session.access_token);
 
-				// then after all of the elements have been handled
-				// the final callback fires to let you know it's all done
-			}).then(function() {
-				console.log('All requests have finished');
-				pageresponse.render('systemDetails', {
-					system : system,
-					active : "systems"
+						// then after all of the elements have been handled
+						// the final callback fires to let you know it's all done
+					}).then(function() {
+						console.log('All requests have finished');
+						pageresponse.render('systemDetails', {
+							system : system,
+							active : "systems"
+						});
+					});
 				});
-			});
+				
+			}).on('error', function(e) {
+				console.log("Error while requesting alerts");
+				next();
+			}).end();
+			
 		});
 	});
 

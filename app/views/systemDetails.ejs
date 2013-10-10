@@ -22,6 +22,21 @@
 		</div>
 	</div>
 	<p/>
+	<div class="row">
+		<div class="col-lg-12">
+			<h2>Alerts</h2>
+			<table class="table">
+				<% for(var i=0; i<system.alerts.length; i++) { %>
+				<tr>
+					<td><strong><%= ("name" in system.alerts[i].rule) ? system.alerts[i].rule.name : 'none' %></strong></td>
+					<td><%= ("message" in system.alerts[i].rule && system.alerts[i].rule.message !== null) ? system.alerts[i].rule.message : '-' %></td>
+					<td><%= ("date" in system.alerts[i]) ? new Date( system.alerts[i].date).toString() : '-' %></td>
+					<td><%= ("acknowledgedAt" in system.alerts[i]) && system.alerts[i].acknowledgedAt !==null ? 'Acknowledged' : 'Not acknowledged' %></td>
+				</tr>
+				<% } %>
+			</table>	
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript">

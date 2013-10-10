@@ -10,6 +10,7 @@
 					<td><span class="label label-success"><%= ("temperature" in systems[i]) ? parseFloat(systems[i].temperature).toFixed(2)+' °C' : 'none' %></span></td>
 					<td><span class="label label-warning"><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></span></td>
 					<td><span class="label label-danger"><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></span></td>
+					<td><span class="label label-info"><%= ("alerts" in systems[i]) ?systems[i].alerts.length + ' alert(s)' : 'no alerts' %></span></td>
 					<td><span class="label label-success"><%= new Date( systems[i].lastCommDate).toString() %></span></td>
 				</tr>
 				<% } %>

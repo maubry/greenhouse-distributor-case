@@ -57,20 +57,50 @@ exports.list = function(pagerequest, pageresponse) {
 			for ( var i = 0; i < data.items.length; i++) {
 				systems.push(data.items[i]);
 			}
+			
+			var options = {
+					host : 'qa-trunk.airvantage.net',
+					path : '/api/v1/alerts?fields=uid,date,target&acknowledged=false&access_token='+pagerequest.session.access_token,
+					method : 'GET'
+				};
+			console.log("request: " + options.host + options.path);
+			var req = http.request(options, function(res) {
+				res.setEncoding('utf8');
+				
+				res.on('data', function(data) {
+					data = JSON.parse(data);
+					
+					//add alert to the system
+					for ( var i = 0; i < data.items.length; i++) {
+						for ( var j = 0; j < systems.length; j++){
+							if (data.items[i].target === systems[j].uid){
+								//create alarm node if needed
+								if (!("alerts" in systems[j])){
+									systems[j].alerts = [];
+								}
+								systems[j].alerts.push(data.items[i]);
+							}
+						}
+					}
+								
+					// request all the datas
+					mod.forEachAsync(systems, function(next, element, index, array) {
+						getSystemDatas(element, next, pagerequest.session.access_token);
 
-			// request all the temperatures
-			mod.forEachAsync(systems, function(next, element, index, array) {
-				getSystemDatas(element, next, pagerequest.session.access_token);
-
-				// then after all of the elements have been handled
-				// the final callback fires to let you know it's all done
-			}).then(function() {
-				console.log('All requests have finished');
-				pageresponse.render('systems', {
-					systems : systems,
-					active : "systems"
+						// then after all of the elements have been handled
+						// the final callback fires to let you know it's all done
+					}).then(function() {
+						console.log('All requests have finished');
+						pageresponse.render('systems', {
+							systems : systems,
+							active : "systems"
+						});
+					});
+					
 				});
-			});
+			}).on('error', function(e) {
+				console.log("Unable to get alarms status");
+			}).end();
 
 		});
 	});
