@@ -10,8 +10,17 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-lg-12">
+	<div class="row triplegraph">
+		<div class="col-lg-1 axis">
+			<div id="axis0"></div>
+		</div>
+		<div class="col-lg-1 axis">
+			<div id="axis1"></div>
+		</div>
+		<div class="col-lg-1 axis">
+			<div id="axis2"></div>	
+		</div>
+		<div class="col-lg-10">
 			<div id="chart" class="rickshaw_graph"></div>
 		</div>
 	</div>
@@ -76,19 +85,19 @@ var graph = new Rickshaw.Graph({
 	series: [{
 		name: "Luminosity",
 		data: data[1],
-		color: palette.color(),
+		color: '#d9534f',
 		scale: scales[1],
-		renderer: "bar"
+		renderer: "line"
 	},{
 		name: "Humidity",
 		data: data[2],
-		color: palette.color(),
+		color: '#f0ad4e',
 		scale: scales[2],
-		renderer: "bar"
+		renderer: "line"
 	},{
 		name: "Temperature",
 		data: data[0],
-		color: palette.color(),
+		color: '#5cb85c',
 		scale: scales[0],
 		renderer: "line"
 	}]
@@ -96,40 +105,46 @@ var graph = new Rickshaw.Graph({
 
 
 var time = new Rickshaw.Fixtures.Time();
-//var timeunit = time.unit('hours');
 
 var xAxis = new Rickshaw.Graph.Axis.Time({
     graph: graph,
-    //timeUnit : timeunit
 });
 
-
+//Temperature
 new Rickshaw.Graph.Axis.Y.Scaled({
-  //element: document.getElementById('axis0'),
-  graph: graph,
-  grid: true,
-  orientation: 'right',
-  scale: scales[0],
-  tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+    element: document.getElementById('axis0'),
+	graph: graph,
+	grid: true,
+	orientation: 'left',
+	height : 250,
+	width : 40,
+	scale: scales[0],
+	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
 });
 
-// new Rickshaw.Graph.Axis.Y.Scaled({
-//   //element: document.getElementById('axis1'),
-//   graph: graph,
-//   grid: false,
-//   orientation: 'right',
-//   scale: scales[1],
-//   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-// });
+//Luminosity
+ new Rickshaw.Graph.Axis.Y.Scaled({
+   element: document.getElementById('axis1'),
+   graph: graph,
+   grid: false,
+   orientation: 'left',
+   height : 250,
+   width : 40,
+   scale: scales[1],
+   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+ });
 
-// new Rickshaw.Graph.Axis.Y.Scaled({
-//   element: document.getElementById('axis2'),
-//   graph: graph,
-//   grid: false,
-//   orientation: 'left',
-//   scale: scales[2],
-//   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-// });
+//Humidity
+ new Rickshaw.Graph.Axis.Y.Scaled({
+   element: document.getElementById('axis2'),
+   graph: graph,
+   grid: false,
+   orientation: 'left',
+   height : 250,
+   width : 40,
+   scale: scales[2],
+   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+ });
 
 var hoverDetail = new Rickshaw.Graph.HoverDetail( {
     graph: graph
@@ -140,13 +155,7 @@ var legend = new Rickshaw.Graph.Legend({
     element: document.querySelector('#graph')
 });
 
-var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
-    graph: graph,
-    legend: legend
-});
-
 graph.render();
-
 
 </script>
 

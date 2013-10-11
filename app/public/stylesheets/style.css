@@ -6,3 +6,20 @@ body {
 a {
   color: #00B7FF;
 }
+
+.axis {
+  width: 40px;
+}
+
+.triplegraph #axis0 text {
+  fill : #5cb85c;
+}
+
+.triplegraph #axis1 text {
+  fill : #d9534f;
+}
+
+.triplegraph #axis2 text {
+  fill : #f0ad4e;
+}
+
