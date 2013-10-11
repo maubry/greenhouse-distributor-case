@@ -17,7 +17,7 @@
 		<% for(var i=0; i<systems.length; i++) { %>
 		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
 			<circle r="7" cx="10" cy="10" style="fill: #d9534f;"/>
-			<text x="19" y="10" dy=".31em" style="color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].name %></text>
+			<text x="19" y="10" dy=".31em" style="color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><a href="#"><%= systems[i].name %></a></text>
 		</svg>
 		<% } %>
 	</div>
@@ -76,8 +76,20 @@ var layer
 overlay.onAdd = function() {
 	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
 	layer = $("#greenhouseContainers").css("position", "absolute");
+	var me = this;
 	for(var i=0; i<systems.length; i++) {
-		layer.append($("#markers #"+systems[i].uid));
+		var marker = $("#markers #"+systems[i].uid);
+		
+		layer.append(marker);
+		
+
+        (function(marker, systemUID) {
+            google.maps.event.addDomListener(marker, 'click', function() {
+    		   google.maps.event.trigger(me, 'click', systemUID);
+  		    });	
+        }(marker[0], systems[i].uid));
+		
+		
 	}
 }
 
@@ -90,6 +102,8 @@ overlay.draw = function() {
 		$("#"+systems[i].uid).css("left", (d.x - 10) + "px").css("top", (d.y - 10) + "px")
 	}
 };
+
+google.maps.event.addListener(overlay, 'click', function(systemUID){window.location.href = "/systems/systemDetails?uid="+systemUID;});
 
 overlay.setMap(map);
 
