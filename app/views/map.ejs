@@ -77,20 +77,27 @@ overlay.onAdd = function() {
 	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
 	layer = $("#greenhouseContainers").css("position", "absolute");
 	var me = this;
-	for(var i=0; i<systems.length; i++) {
-		var marker = $("#markers #"+systems[i].uid);
+	// for(var i=0; i<systems.length; i++) {
+	// 	var marker = $("#markers #"+systems[i].uid);
 		
-		layer.append(marker);
+	// 	layer.append(marker);
 		
 
-        (function(marker, systemUID) {
-            google.maps.event.addDomListener(marker, 'click', function() {
-    		   google.maps.event.trigger(me, 'click', systemUID);
-  		    });	
-        }(marker[0], systems[i].uid));
+ //        (function(marker, systemUID) {
+ //            google.maps.event.addDomListener(marker, 'click', function() {
+ //    		   google.maps.event.trigger(me, 'click', systemUID);
+ //  		    });	
+ //        }(marker[0], systems[i].uid));
 		
 		
-	}
+	// }
+	_.each(systems, function(system){
+		var marker = $("#markers #"+system.uid);
+		layer.append(marker);
+		google.maps.event.addDomListener(marker[0], 'click', function() {
+    		google.maps.event.trigger(me, 'click', system.uid);
+   		});	
+	});
 }
 
 overlay.draw = function() {
