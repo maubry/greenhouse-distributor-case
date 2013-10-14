@@ -4,7 +4,7 @@ var express = require('express');
 var routes  = require('./routes');
 var alerts  = require('./routes/alerts');
 var login   = require('./routes/login');
-var system  = require('./routes/system');
+var systems  = require('./routes/systems');
 var map     = require('./routes/map');
 var systemDetails = require('./routes/systemDetails');
 var http = require('http');
@@ -44,7 +44,7 @@ app.post('/logout', login.signout.post);
 
 app.get('/', login.checkAuth, routes.index);
 app.get('/alerts',  login.checkAuth, alerts.list);
-app.get('/systems', login.checkAuth, system.list);
+app.get('/systems', login.checkAuth, systems.list);
 app.get('/map', login.checkAuth, map.display);
 app.get('/systems/systemDetails', login.checkAuth, systemDetails.display);
 
