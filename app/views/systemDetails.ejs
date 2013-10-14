@@ -34,11 +34,11 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<h2>Alerts</h2>
-			<table class="table">
+			<table class="table table-hover table-striped">
 				<% for(var i=0; i<system.alerts.length; i++) { %>
-				<tr>
+				<tr class="<%= ! system.alerts[i].acknowledgedAt ? 'danger' : '' %>">
 					<td><strong><%= ("name" in system.alerts[i].rule) ? system.alerts[i].rule.name : 'none' %></strong></td>
-					<td><%= ("message" in system.alerts[i].rule && system.alerts[i].rule.message !== null) ? system.alerts[i].rule.message : '-' %></td>
+					<td><%= ("message" in system.alerts[i].rule && system.alerts[i].rule.message !== null) ? system.alerts[i].rule.message : system.alerts[i].rule.name %></td>
 					<td><%= ("date" in system.alerts[i]) ? new Date( system.alerts[i].date).toString() : '-' %></td>
 					<td><%= ("acknowledgedAt" in system.alerts[i]) && system.alerts[i].acknowledgedAt !==null ? 'Acknowledged' : 'Not acknowledged' %></td>
 				</tr>
@@ -53,7 +53,6 @@
 var palette = new Rickshaw.Color.Palette();
 
 scales = [];
-
 
 data = [<%- JSON.stringify(system.temperature) %>, <%- JSON.stringify(system.luminosity)%>, <%- JSON.stringify(system.humidity)%>];
 
