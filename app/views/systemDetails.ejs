@@ -10,18 +10,22 @@
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-lg-12">
+			<h2>Data</h2>
+		</div>
+	</div>	
+
 	<div class="row triplegraph">
-		<div class="col-lg-1 axis">
-			<div id="axis0"></div>
-		</div>
-		<div class="col-lg-1 axis">
-			<div id="axis1"></div>
-		</div>
-		<div class="col-lg-1 axis">
-			<div id="axis2"></div>	
-		</div>
-		<div class="col-lg-10">
-			<div id="chart" class="rickshaw_graph"></div>
+		<div class="col-lg-12">
+			<div style="float:left;">
+				<span id="axis0"></span>
+				<span id="axis1"></span>
+				<span id="axis2"></span>
+			</div>
+			<div style="overflow:hidden;">
+				<div id="chart" class="rickshaw_graph"></div>
+			</div>
 		</div>
 	</div>
 	<p/>
@@ -30,10 +34,15 @@
 			<div id="graph"></div>			
 		</div>
 	</div>
-	<p/>
+	
 	<div class="row">
 		<div class="col-lg-12">
 			<h2>Alerts</h2>
+		</div>
+	</div>		
+
+	<div class="row">
+		<div class="col-lg-12">
 			<table class="table table-hover table-striped">
 				<% for(var i=0; i<system.alerts.length; i++) { %>
 				<tr class="<%= ! system.alerts[i].acknowledgedAt ? 'danger' : '' %>">
@@ -58,24 +67,24 @@ data = [<%- JSON.stringify(system.temperature) %>, <%- JSON.stringify(system.lum
 
 _ref = data[1];
 for (_j = 0, _len = _ref.length; _j < _len; _j++) {
-  point = _ref[_j];
-  point.y *= point.y;
+	point = _ref[_j];
+	point.y *= point.y;
 }
 
 for (_k = 0, _len1 = data.length; _k < _len1; _k++) {
-  series = data[_k];
-  min = Number.MAX_VALUE;
-  max = Number.MIN_VALUE;
-  for (_l = 0, _len2 = series.length; _l < _len2; _l++) {
-    point = series[_l];
-    min = Math.min(min, point.y);
-    max = Math.max(max, point.y);
-  }
-  if (_k === 0) {
-    scales.push(d3.scale.linear().domain([min, max]).nice());
-  } else {
-    scales.push(d3.scale.pow().domain([min, max]).nice());
-  }
+	series = data[_k];
+	min = Number.MAX_VALUE;
+	max = Number.MIN_VALUE;
+	for (_l = 0, _len2 = series.length; _l < _len2; _l++) {
+		point = series[_l];
+		min = Math.min(min, point.y);
+		max = Math.max(max, point.y);
+	}
+	if (_k === 0) {
+		scales.push(d3.scale.linear().domain([min, max]).nice());
+	} else {
+		scales.push(d3.scale.pow().domain([min, max]).nice());
+	}
 }
 
 var graph = new Rickshaw.Graph({
@@ -106,12 +115,12 @@ var graph = new Rickshaw.Graph({
 var time = new Rickshaw.Fixtures.Time();
 
 var xAxis = new Rickshaw.Graph.Axis.Time({
-    graph: graph,
+	graph: graph,
 });
 
 //Temperature
 new Rickshaw.Graph.Axis.Y.Scaled({
-    element: document.getElementById('axis0'),
+	element: document.getElementById('axis0'),
 	graph: graph,
 	grid: true,
 	orientation: 'left',
@@ -122,36 +131,36 @@ new Rickshaw.Graph.Axis.Y.Scaled({
 });
 
 //Luminosity
- new Rickshaw.Graph.Axis.Y.Scaled({
-   element: document.getElementById('axis1'),
-   graph: graph,
-   grid: false,
-   orientation: 'left',
-   height : 250,
-   width : 40,
-   scale: scales[1],
-   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
- });
+new Rickshaw.Graph.Axis.Y.Scaled({
+	element: document.getElementById('axis1'),
+	graph: graph,
+	grid: false,
+	orientation: 'left',
+	height : 250,
+	width : 40,
+	scale: scales[1],
+	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
 
 //Humidity
- new Rickshaw.Graph.Axis.Y.Scaled({
-   element: document.getElementById('axis2'),
-   graph: graph,
-   grid: false,
-   orientation: 'left',
-   height : 250,
-   width : 40,
-   scale: scales[2],
-   tickFormat: Rickshaw.Fixtures.Number.formatKMBT
- });
+new Rickshaw.Graph.Axis.Y.Scaled({
+	element: document.getElementById('axis2'),
+	graph: graph,
+	grid: false,
+	orientation: 'left',
+	height : 250,
+	width : 40,
+	scale: scales[2],
+	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
 
 var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-    graph: graph
+	graph: graph
 } );
 
 var legend = new Rickshaw.Graph.Legend({
-    graph: graph,
-    element: document.querySelector('#graph')
+	graph: graph,
+	element: document.querySelector('#graph')
 });
 
 graph.render();
