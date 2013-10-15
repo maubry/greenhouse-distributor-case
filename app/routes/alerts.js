@@ -25,7 +25,7 @@ exports.list = function(request, pageresponse) {
 			pageresponse.render('alerts', {
 				active : 'alerts',
 				alerts : data.items,
-				count : data.count
+				alerts_count : data.count
 			});
 		}).on('error', function(e) {
 			console.log('Unable to get alarms details.');
