@@ -47,11 +47,12 @@ exports.list = function(pagerequest, pageresponse) {
 		path : '/api/v1/systems?fields=uid,name,lastCommDate&access_token=' + pagerequest.session.access_token,
 		method : 'GET'
 	};
-	console.log("request: " + options.host + options.path);
+	console.log("System request: " + options.host + options.path);
 
 	var req = http.request(options, function(res) {
 		res.setEncoding('utf8');
 		res.on('data', function(data) {
+			console.log('System data: ' + data);
 			data = JSON.parse(data);
 			for (var i = 0; i < data.items.length; i++) {
 				systems.push(data.items[i]);
@@ -59,26 +60,31 @@ exports.list = function(pagerequest, pageresponse) {
 			
 			var options = {
 				host : 'qa-trunk.airvantage.net',
-				path : '/api/v1/alerts?fields=uid,date,target,acknowledged&access_token='+pagerequest.session.access_token,
+				path : '/api/v1/alerts?fields=uid,date,target,acknowledgedAt&access_token='+pagerequest.session.access_token,
 				method : 'GET'
 			};
-			console.log("request: " + options.host + options.path);
+			console.log("Alerts request: " + options.host + options.path);
 			http.request(options, function(res) {
 				res.setEncoding('utf8');
 				res.on('data', function(data) {
 
-					console.log( 'Alerts request: ' + data );
+					console.log('Alerts data: ' + data);
 					data = JSON.parse(data);
 					// add alert to the system
+					var alerts_count = 0;
 					for ( var i = 0; i < data.items.length; i++) {
+						var alert = data.items[i];
 						for ( var j = 0; j < systems.length; j++){
-							if (data.items[i].target === systems[j].uid){
+							if (alert.target === systems[j].uid){
 								//create alarm node if needed
 								if (!("alerts" in systems[j])){
 									systems[j].alerts = [];
 								}
-								systems[j].alerts.push(data.items[i]);
+								systems[j].alerts.push(alert);
 							}
+						}
+						if (!alert.acknowledgedAt){
+							alerts_count++;
 						}
 					}
 								
@@ -91,7 +97,7 @@ exports.list = function(pagerequest, pageresponse) {
 					}).then(function() {
 						console.log('All requests are done.');
 						pageresponse.render('systems', {
-							alerts_count: data.count,
+							alerts_count: alerts_count,
 							systems : systems,
 							active : "systems"
 						});
@@ -101,7 +107,6 @@ exports.list = function(pagerequest, pageresponse) {
 			}).on('error', function(e) {
 				console.log("Unable to get alarms status");
 			}).end();
-
 		});
 	});
 

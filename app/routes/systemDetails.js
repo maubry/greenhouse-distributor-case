@@ -18,10 +18,12 @@ function getDatas(element, next, system, access_token) {
 			method : 'GET'
 		};
 	
-	console.log("request: " + options.host + options.path);
+	console.log("System data request: " + options.host + options.path);
 	var req = http.request(options, function(res) {
 		res.setEncoding('utf8');
 		res.on('data', function(data) {
+			// Data is not shown: It is massive!
+			console.log("System data recieved.");
 			data = JSON.parse(data);
 			system[element] = [];
 			for (var i = 0; i < data.length; i++){
@@ -47,7 +49,7 @@ exports.display = function(pagerequest, pageresponse) {
 	// Fetch alert count
 	var url = {
 		host : 'qa-trunk.airvantage.net',
-		path : '/api/v1/alerts?fields=uid&access_token=' + pagerequest.session.access_token,
+		path : '/api/v1/alerts?fields=uid,acknowledgedAt&access_token=' + pagerequest.session.access_token,
 		method : 'GET'
 	};
 
@@ -56,6 +58,14 @@ exports.display = function(pagerequest, pageresponse) {
 		response.on('data', function(data){
 			console.log('Alert count data: '+ data);
 			var alerts = JSON.parse(data);
+			// TODO: use filters to avoid this loop of nonsense
+			var alerts_count = 0;
+			for(var a=0; a < alerts.items.length; a++){
+				var alert = alerts.items[a];
+				if (!alert.acknowledgedAt){
+					alerts_count++;
+				}
+			}
 
 			var options = {
 				host : 'qa-trunk.airvantage.net',
@@ -84,7 +94,7 @@ exports.display = function(pagerequest, pageresponse) {
 							data = JSON.parse(data);
 							system.alerts = data.items;
 
-							//get the historicals datas
+							//get the historical data
 							mod.forEachAsync(["temperature","luminosity","humidity"], function(next, element, index, array) {
 								getDatas(element, next, system, pagerequest.session.access_token);
 
@@ -95,7 +105,7 @@ exports.display = function(pagerequest, pageresponse) {
 								pageresponse.render('systemDetails', {
 									system : system,
 									active : "none",
-									alerts_count: alerts.count
+									alerts_count: alerts_count
 								});
 							});
 						});
