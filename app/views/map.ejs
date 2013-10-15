@@ -16,7 +16,7 @@
 	<div id="markers">
 		<% for(var i=0; i<systems.length; i++) { %>
 		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
-			<circle r="7" cx="10" cy="10" style="fill: #d9534f;"/>
+			<circle r="7" cx="10" cy="10" style="fill: <%= systems[i].alerts ? '#d9534f' : '#5cb85c' %>;"/>
 			<text x="19" y="10" dy=".31em" style="color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><a href="#"><%= systems[i].name %></a></text>
 		</svg>
 		<% } %>
