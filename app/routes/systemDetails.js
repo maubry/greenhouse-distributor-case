@@ -44,60 +44,80 @@ exports.display = function(pagerequest, pageresponse) {
 	var system = {};
 	system.uid = pagerequest.query.uid;
 
-	var options = {
+	// Fetch alert count
+	var url = {
 		host : 'qa-trunk.airvantage.net',
-		path : '/api/v1/systems?fields=name&uid=' + system.uid + '&access_token=' + pagerequest.session.access_token,
+		path : '/api/v1/alerts?fields=uid&access_token=' + pagerequest.session.access_token,
 		method : 'GET'
 	};
-	console.log("request: " + options.host + options.path);
 
-	var req = http.request(options, function(res) {
-		res.setEncoding('utf8');
-		res.on('data', function(data) {
-			data = JSON.parse(data);
-			system.name = data.items[0].name;
-			
-			//get the alerts on the system if any
+	console.log("Alert count request: " + url.host + url.path);
+	http.request(url, function(response){
+		response.on('data', function(data){
+			console.log('Alert count data: '+ data);
+			var alerts = JSON.parse(data);
+
 			var options = {
 				host : 'qa-trunk.airvantage.net',
-				path : '/api/v1/alerts?target=' + system.uid + '&fields=uid,target,rule,date,acknowledgedAt&access_token=' + pagerequest.session.access_token,
+				path : '/api/v1/systems?fields=name&uid=' + system.uid + '&access_token=' + pagerequest.session.access_token,
 				method : 'GET'
 			};
-			console.log("request: " + options.host + options.path);
-			
+
+			console.log("System request: " + options.host + options.path);
 			http.request(options, function(res) {
 				res.setEncoding('utf8');
 				res.on('data', function(data) {
 					data = JSON.parse(data);
+					system.name = data.items[0].name;
 					
-					system.alerts = data.items;
-					
-					//get the historicals datas
-					mod.forEachAsync(["temperature","luminosity","humidity"], function(next, element, index, array) {
-						getDatas(element, next, system, pagerequest.session.access_token);
+					//get the alerts on the system if any
+					var options = {
+						host : 'qa-trunk.airvantage.net',
+						path : '/api/v1/alerts?target=' + system.uid + '&fields=uid,target,rule,date,acknowledgedAt&access_token=' + pagerequest.session.access_token,
+						method : 'GET'
+					};
 
-						// then after all of the elements have been handled
-						// the final callback fires to let you know it's all done
-					}).then(function() {
-						console.log('All requests have finished');
-						pageresponse.render('systemDetails', {
-							system : system,
-							active : "systems"
+					console.log("System alerts request: " + options.host + options.path);
+					http.request(options, function(res) {
+						res.setEncoding('utf8');
+						res.on('data', function(data) {
+							data = JSON.parse(data);
+							system.alerts = data.items;
+
+							//get the historicals datas
+							mod.forEachAsync(["temperature","luminosity","humidity"], function(next, element, index, array) {
+								getDatas(element, next, system, pagerequest.session.access_token);
+
+								// then after all of the elements have been handled
+								// the final callback fires to let you know it's all done
+							}).then(function() {
+								console.log('All requests are done.');
+								pageresponse.render('systemDetails', {
+									system : system,
+									active : "systems",
+									alerts_count: alerts.count
+								});
+							});
 						});
-					});
+
+					}).on('error', function(e){
+						console.log("Unable to fetch system's alerts: " + e.message);
+					}).end();
+
+				}).on('error', function(e) {
+					console.log("Error while requesting alerts: " + e.message);
+					next();
 				});
-				
+
 			}).on('error', function(e) {
-				console.log("Error while requesting alerts");
-				next();
+				console.log('Unable to retreive system: ' + e.message);
 			}).end();
-			
+
+		}).on('error', function (e){
+			console.log('Unable to fetch alert count: ' + e.message);
 		});
-	});
 
-	req.on('error', function(e) {
-		console.log('Unable to retreive system: ' + e.message);
-	});
-	req.end();
-
+	}).on('error', function (e){
+		console.log('Unable to request alert count: ' + e.message);
+	}).end();
 };
