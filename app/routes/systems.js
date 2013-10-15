@@ -63,13 +63,13 @@ exports.list = function(pagerequest, pageresponse) {
 				method : 'GET'
 			};
 			console.log("request: " + options.host + options.path);
-			var req = http.request(options, function(res) {
+			http.request(options, function(res) {
 				res.setEncoding('utf8');
-				
 				res.on('data', function(data) {
+
+					console.log( 'Alerts request: ' + data );
 					data = JSON.parse(data);
-					
-					//add alert to the system
+					// add alert to the system
 					for ( var i = 0; i < data.items.length; i++) {
 						for ( var j = 0; j < systems.length; j++){
 							if (data.items[i].target === systems[j].uid){
@@ -89,8 +89,9 @@ exports.list = function(pagerequest, pageresponse) {
 						// then after all of the elements have been handled
 						// the final callback fires to let you know it's all done
 					}).then(function() {
-						console.log('All requests have finished');
+						console.log('All requests are done.');
 						pageresponse.render('systems', {
+							alerts_count: data.count,
 							systems : systems,
 							active : "systems"
 						});
@@ -110,5 +111,3 @@ exports.list = function(pagerequest, pageresponse) {
 	req.end();
 
 };
-
-// exports.list = function(req, res) { res.render('systemdetail', {}); };

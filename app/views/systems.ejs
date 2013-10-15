@@ -2,16 +2,22 @@
 <div class="container">
 	<div class="row">
 		<div class="col-lg-12">
-			<table class="table">
+			<table class="table table-hover table-striped">
 				<!-- <tr><th>Name</th><th>Temperature</th><th>Humidity</th><th>Luminosity</th><th>Last Com</th></tr> -->
 				<% for(var i=0; i<systems.length; i++) { %>
-				<tr>
+				<tr class="<%= systems[i].alerts ? 'danger' : '' %>">
 					<td><a href="/systems/systemDetails?uid=<%= systems[i].uid %>"><%= systems[i].name %></a></td>
-					<td><span class="label label-success"><%= ("temperature" in systems[i]) ? parseFloat(systems[i].temperature).toFixed(2)+' °C' : 'none' %></span></td>
-					<td><span class="label label-warning"><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></span></td>
-					<td><span class="label label-danger"><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></span></td>
-					<td><span class="label label-info"><%= ("alerts" in systems[i]) ?systems[i].alerts.length + ' alert(s)' : 'no alerts' %></span></td>
-					<td><span class="label label-success"><%= new Date( systems[i].lastCommDate).toString() %></span></td>
+					<td><%= ("temperature" in systems[i]) ? parseFloat(systems[i].temperature).toFixed(2)+' °C' : 'none' %></td>
+					<td><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></td>
+					<td><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></td>
+					<td>
+						<% if ("alerts" in systems[i]) { %>
+							<span class="label label-danger"><%= systems[i].alerts.length %> alert(s)</span>
+						<% } else { %>
+							<span class="label label-default">no alerts</span>
+						<% } %>
+					</td>
+					<td><%= new Date( systems[i].lastCommDate).toString() %></td>
 				</tr>
 				<% } %>
 			</table>
