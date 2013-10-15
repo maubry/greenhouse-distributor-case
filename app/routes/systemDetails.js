@@ -94,7 +94,7 @@ exports.display = function(pagerequest, pageresponse) {
 								console.log('All requests are done.');
 								pageresponse.render('systemDetails', {
 									system : system,
-									active : "systems",
+									active : "none",
 									alerts_count: alerts.count
 								});
 							});
