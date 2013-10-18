@@ -90,6 +90,7 @@ for (_k = 0, _len1 = data.length; _k < _len1; _k++) {
 var graph = new Rickshaw.Graph({
 	element: document.querySelector("#chart"),
 	renderer: 'multi',
+	interpolation: "linear",
 	series: [{
 		name: "Luminosity",
 		data: data[1],

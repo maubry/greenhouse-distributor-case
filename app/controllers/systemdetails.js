@@ -27,7 +27,7 @@ function getDatas(element, next, system, access_token) {
 			data = JSON.parse(data);
 			system[element] = [];
 			for (var i = 0; i < data.length; i++){
-				system[element].push({y:data[i].value,x:(data[data.length-i-1].timestamp)/1000});
+			    system[element].push({y:data[data.length-i-1].value,x:Math.floor(data[data.length-i-1].timestamp/1000)});
 			}
 			
 			next();
