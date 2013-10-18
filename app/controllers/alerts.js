@@ -4,7 +4,7 @@
 "use strict";
 var https = require('https');
 
-exports.list = function(request, pageresponse) {
+exports.get = function(request, pageresponse) {
 
 	/*
 	 * Fetch all alarms

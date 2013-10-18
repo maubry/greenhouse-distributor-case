@@ -1,14 +1,15 @@
 // Modules dependencies
 // ---------------------------
 var express = require('express');
-var routes  = require('./routes');
-var alerts  = require('./routes/alerts');
-var login   = require('./routes/login');
-var systems  = require('./routes/systems');
-var map     = require('./routes/map');
-var systemDetails = require('./routes/systemDetails');
 var http = require('http');
 var path = require('path');
+
+var auth   = require('./controllers/auth');
+var alerts  = require('./controllers/alerts');
+var systems  = require('./controllers/systems');
+var map     = require('./controllers/map');
+var systemdetails = require('./controllers/systemdetails');
+
 
 var app = express();
 
@@ -38,15 +39,15 @@ if ('development' == app.get('env')) {
 
 // Define routes
 // ---------------------------
-app.get('/login', login.signin.get);
-app.post('/login', login.signin.post);
-app.post('/logout', login.signout.post);
+app.get('/signin', auth.signin.get);
+app.post('/signin', auth.signin.post);
+app.post('/signout', auth.signout.post);
 
-app.get('/', login.checkAuth, routes.index);
-app.get('/alerts',  login.checkAuth, alerts.list);
-app.get('/systems', login.checkAuth, systems.list);
-app.get('/map', login.checkAuth, map.display);
-app.get('/systems/systemDetails', login.checkAuth, systemDetails.display);
+app.get('/', auth.check, function(req, res) {res.redirect('/systems');} );
+app.get('/alerts',  auth.check, alerts.get);
+app.get('/systems', auth.check, systems.get);
+app.get('/map', auth.check, map.get);
+app.get('/systems/details', auth.check, systemdetails.get);
 
 // create server
 // ---------------------------

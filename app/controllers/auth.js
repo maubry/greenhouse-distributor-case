@@ -5,13 +5,13 @@ var https = require('https');
 /**
  * Manage login/authentication Redirect on login page if there aren't access_token in current session
  */
-exports.checkAuth = function(req, res, next) {
+exports.check = function(req, res, next) {
 	// save the original URL in case we redirect to the login page
 	// to allow it to return to the requested page
 	req.session.originalUrl = req.originalUrl; 
 	if (!req.session.access_token) {
 		// to access-token, we go to the login page
-		res.redirect('/login');
+		res.redirect('/signin');
 	}else if (req.session.expires_at - 3600000 > new Date().getTime()){
 		// access token will expire, so we try to get a new one transparently
 		
@@ -38,12 +38,12 @@ exports.checkAuth = function(req, res, next) {
 					} else {
 						// we don't succed to refresh token, we go to the login page.
 						console.log('AirVantage return an unexpected status code ('+ resp.statusCode+") : "+ chunk);
-						res.redirect('/login');
+						res.redirect('/signin');
 					};
 				}catch (e){
 					// if we get an unexpected response, log it an go to the login page
 					console.log(e);
-					res.redirect('/login');
+					res.redirect('/signin');
 				};
 			});
 
@@ -53,7 +53,7 @@ exports.checkAuth = function(req, res, next) {
 		r.on('error', function (e){
 			// if an unexpected error occurred, log it an go to the login page
 			console.log(e);
-			res.redirect('/login');
+			res.redirect('/signin');
 		});
 		
 		// execute request
@@ -67,7 +67,7 @@ exports.signin = {};
 
 /** render login page */
 exports.signin.get = function(req, res) {
-	res.render('login', {});
+	res.render('signin', {});
 };
 
 /** try get access_token for AirVantage */
@@ -99,7 +99,7 @@ exports.signin.post = function(req, res,next) {
 				} else if (resp.statusCode == 400) {
 					// on error, display login page with error message
 					var error = JSON.parse(chunk);
-					res.render('login', {
+					res.render('signin', {
 						errormsg : error.error_description,
 					});
 				}else{
@@ -126,5 +126,5 @@ exports.signout.post = function(req, res) {
 	req.session.access_token = null;
 	req.session.refresh_token = null;
 	req.session.expires_at = null;
-	res.render('login', {});
+	res.render('signin', {});
 };

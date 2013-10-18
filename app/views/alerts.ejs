@@ -6,7 +6,7 @@
 				<!-- <tr><th>Name</th><th>Temperature</th><th>Humidity</th><th>Luminosity</th><th>Last Com</th></tr> -->
 				<% for(var k=0; k < alerts.length; k++) { %>
 				<tr class="<%= alerts[k].acknowledgedBy ? '' : 'danger' %>">
-					<td><a href="/systems/systemDetails?uid=<%= alerts[k].target %>"><%= alerts[k].targetDescription.name %></a></td>
+					<td><a href="/systems/details?uid=<%= alerts[k].target %>"><%= alerts[k].targetDescription.name %></a></td>
 					<td><%= alerts[k].rule.message ? alerts[k].rule.message : alerts[k].rule.name %></td>
 					<td><%= alerts[k].acknowledgedBy ? alerts[k].acknowledgedBy : '' %></td>
 					<td><%= new Date( alerts[k].date ).toString() %></td>

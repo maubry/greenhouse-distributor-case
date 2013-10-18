@@ -6,7 +6,7 @@
  var http = require('https');
 
 
- exports.display = function(pagerequest, pageresponse) {
+ exports.get = function(pagerequest, pageresponse) {
 
  	var systems = [];
 

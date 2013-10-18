@@ -40,7 +40,7 @@ function getDatas(element, next, system, access_token) {
 	req.end();
 }
 
-exports.display = function(pagerequest, pageresponse) {
+exports.get = function(pagerequest, pageresponse) {
 
 	// get system from URL
 	var system = {};

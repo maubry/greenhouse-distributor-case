@@ -111,7 +111,7 @@ overlay.draw = function() {
 	}
 };
 
-google.maps.event.addListener(overlay, 'click', function(systemUID){window.location.href = "/systems/systemDetails?uid="+systemUID;});
+google.maps.event.addListener(overlay, 'click', function(systemUID){window.location.href = "/systems/details?uid="+systemUID;});
 
 overlay.setMap(map);
 

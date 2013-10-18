@@ -6,11 +6,12 @@
 				<!-- <tr><th>Name</th><th>Temperature</th><th>Humidity</th><th>Luminosity</th><th>Last Com</th></tr> -->
 				<% for(var i=0; i<systems.length; i++) { %>
 				<tr class="<%= systems[i].alerts ? 'danger' : '' %>">
-					<td><a href="/systems/systemDetails?uid=<%= systems[i].uid %>"><%= systems[i].name %></a></td>
+				<tr>
+					<td><a href="/systems/details?uid=<%= systems[i].uid %>"><%= systems[i].name %></a></td>
 					<td><%= ("temperature" in systems[i]) ? parseFloat(systems[i].temperature).toFixed(2)+' °C' : 'none' %></td>
 					<td><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></td>
 					<td><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></td>
-					<td>
+					 <td>
 						<% if ("alerts" in systems[i]) { %>
 							<span class="label label-danger"><%= systems[i].alerts.length %> alert(s)</span>
 						<% } else { %>
