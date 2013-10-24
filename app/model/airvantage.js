@@ -101,5 +101,8 @@ exports.alerts_ack = query_post_ctor(host, baseurl, "alerts/:uid/acknowledge");
 /** Get last data of a system */
 exports.data_query = query_get_ctor(host, baseurl, "systems/:uid/data");
 
+/** Get raw datapoints of a system */
+exports.data_raw_query = query_get_ctor(host, baseurl, "systems/:uid/data/:path/raw");
+
 
 
