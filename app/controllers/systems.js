@@ -47,17 +47,21 @@ exports.get = function(req, resp) {
             console.log("ERR: " + err);
         } else {
             // attach alerts to their system
-            res.alerts = _.groupBy(res.alerts.items, 'target');
-            res.systems = _.map(res.systems, function(system) {
-                var a = res.alerts[system.uid];
+            var alerts = _.groupBy(res.alerts.items, 'target');
+
+            // count number of not acknowled alerts
+            var alerts_count = _.size(_.reject(res.alerts.items, function(alert){return alert.acknowledgedAt}));
+
+            var systems = _.map(res.systems, function(system) {
+                var a = alerts[system.uid];
                 if (a) system.alerts = a;
                 return system;
             });
 
             // render the page
             resp.render('systems', {
-                alerts_count : 0,
-                systems : res.systems,
+                alerts_count : alerts_count,
+                systems : systems,
                 active : "systems"
             });
         }
