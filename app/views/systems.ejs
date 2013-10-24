@@ -12,13 +12,13 @@
 					<td><%= ("humidity" in systems[i]) ? parseFloat(systems[i].humidity).toFixed(2)+' %' : 'none' %></td>
 					<td><%= ("luminosity" in systems[i]) ? parseFloat(systems[i].luminosity).toFixed(2)+' Lux' : 'none' %></td>
 					 <td>
-						<% if ("alerts" in systems[i]) { %>
-							<span class="label label-danger"><%= systems[i].alerts.length %> alert(s)</span>
+						<% if ("alerts_count" in systems[i]) { %>
+							<span class="label label-danger"><%= systems[i].alerts_count %> alert(s)</span>
 						<% } else { %>
-							<span class="label label-default">no alerts</span>
+							<span class="label label-default">no alert</span>
 						<% } %>
 					</td>
-					<td><%= new Date( systems[i].lastCommDate).toString() %></td>
+					<td><%= new Date(systems[i].lastCommDate).toString() %></td>
 				</tr>
 				<% } %>
 			</table>
