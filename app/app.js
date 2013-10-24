@@ -45,6 +45,7 @@ app.post('/signout', auth.signout.post);
 
 app.get('/', auth.check, function(req, res) {res.redirect('/systems');} );
 app.get('/alerts',  auth.check, alerts.get);
+app.post('/alerts',  auth.check, alerts.post);
 app.get('/systems', auth.check, systems.get);
 app.get('/map', auth.check, map.get);
 app.get('/systems/details', auth.check, systemdetails.get);

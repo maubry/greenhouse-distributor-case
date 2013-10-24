@@ -95,5 +95,11 @@ exports.systems_query = query_get_ctor(host, baseurl, "systems");
 /** Get all alert */
 exports.alerts_query = query_get_ctor(host, baseurl, "alerts");
 
+/** Acknowledge an alert */
+exports.alerts_ack = query_post_ctor(host, baseurl, "alerts/:uid/acknowledge");
+
 /** Get last data of a system */
-exports.data_query = query_get_ctor(host, baseurl, "systems/:uid/data");    
+exports.data_query = query_get_ctor(host, baseurl, "systems/:uid/data");
+
+
+

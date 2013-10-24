@@ -2,6 +2,7 @@
  * List of alarms
  */
 "use strict";
+var airvantage = require('../model/airvantage');
 var https = require('https');
 
 exports.get = function(request, pageresponse) {
@@ -40,4 +41,15 @@ exports.get = function(request, pageresponse) {
     }).on('error', function(e) {
         console.log('Unable to fetch alarms: ' + e.message);
     }).end();
+};
+
+exports.post = function(req, res, next){
+    airvantage.alerts_ack({uid: req.body.uid, "access_token": req.session.access_token}, "")(function(error, results){
+        if(error){
+            next(error);
+        }else{
+            res.redirect(req.session.originalUrl);
+        }
+
+    });
 };
