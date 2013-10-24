@@ -42,6 +42,7 @@ exports.get = function(req, resp) {
             resp.render('systemDetails', {
                 alerts_count : alerts_count,
                 system : system,
+                redirect: req.originalUrl,
                 active : 'none'
             });
         }

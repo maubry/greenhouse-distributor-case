@@ -26,6 +26,7 @@ exports.get = function(req, resp) {
             resp.render('alerts', {
                 alerts : alerts,
                 active : "alerts",
+                redirect: req.originalUrl,
                 alerts_count : alerts_count
             });
         }
@@ -44,7 +45,7 @@ exports.post = function(req, resp, next){
             next(err);
         }else{
             // redirect to the page that send the ack
-            resp.redirect(req.session.originalUrl);
+            resp.redirect(req.body.redirect);
         }
     });
 

@@ -11,7 +11,9 @@
 					<td><%= alerts[k].acknowledgedBy ? alerts[k].acknowledgedBy : '' %>
 						<% if(!alerts[k].acknowledgedBy) { %> 
 						<form role="form" method="POST" action="/alerts" accept-charset="UTF-8">
-							<button type="submit" name="uid" value="<%= alerts[k].uid%>" class="btn btn-default btn-xs">Acknowledge</button>
+							<input type="hidden" name="redirect" value="<%= redirect %>"/>
+							<input type="hidden" name="uid" value="<%= alerts[k].uid %>"/>
+							<button type="submit" name="submit" class="btn btn-default btn-xs">Acknowledge</button>
 						</form>
 						<% } %>
 					</td>

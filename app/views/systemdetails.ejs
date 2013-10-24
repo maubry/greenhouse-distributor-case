@@ -45,11 +45,18 @@
 		<div class="col-lg-12">
 			<table class="table table-hover table-striped">
 				<% for(var i=0; i<system.alerts.length; i++) { %>
-				<tr class="<%= ! system.alerts[i].acknowledgedAt ? 'danger' : '' %>">
-					<td><strong><%= ("name" in system.alerts[i].rule) ? system.alerts[i].rule.name : 'none' %></strong></td>
-					<td><%= ("message" in system.alerts[i].rule && system.alerts[i].rule.message !== null) ? system.alerts[i].rule.message : system.alerts[i].rule.name %></td>
-					<td><%= ("date" in system.alerts[i]) ? new Date( system.alerts[i].date).toString() : '-' %></td>
-					<td><%= ("acknowledgedAt" in system.alerts[i]) && system.alerts[i].acknowledgedAt !==null ? 'Acknowledged' : 'Not acknowledged' %></td>
+					<tr class="<%= system.alerts[i].acknowledgedBy ? '' : 'danger' %>">
+					<td><%= system.alerts[i].rule.message || system.alerts[i].rule.name %></td>
+					<td><%= system.alerts[i].acknowledgedBy || '' %>
+						<% if(!system.alerts[i].acknowledgedBy) { %> 
+						<form role="form" method="POST" action="/alerts" accept-charset="UTF-8">
+							<input type="hidden" name="redirect" value="<%= redirect %>"/>
+							<input type="hidden" name="uid" value="<%= system.alerts[i].uid %>"/>
+							<button type="submit" name="submit" class="btn btn-default btn-xs">Acknowledge</button>
+						</form>
+						<% } %>
+					</td>
+					<td><%= new Date(system.alerts[i].date ).toString() %></td>
 				</tr>
 				<% } %>
 			</table>	
