@@ -16,8 +16,8 @@
 	<div id="markers">
 		<% for(var i=0; i<systems.length; i++) { %>
 		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
-			<circle r="7" cx="10" cy="10" style="fill: <%= systems[i].alerts ? '#d9534f' : '#5cb85c' %>;"/>
-			<text x="7" y="11" dy=".28em" style="fill: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].alerts ? systems[i].alerts.length : '' %></text>
+			<circle r="7" cx="10" cy="10" style="fill: <%= systems[i].alerts_count ? '#d9534f' : '#5cb85c' %>;"/>
+			<text x="7" y="11" dy=".28em" style="fill: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].alerts_count || '' %></text>
 			<text x="19" y="10" dy=".31em" style="fill: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><a href="#"><%= systems[i].name %></a></text>
 		</svg>
 		<% } %>
@@ -72,26 +72,11 @@ var overlay = new google.maps.OverlayView();
 
 var layer
 
-
-
 overlay.onAdd = function() {
 	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
 	layer = $("#greenhouseContainers").css("position", "absolute");
 	var me = this;
-	// for(var i=0; i<systems.length; i++) {
-	// 	var marker = $("#markers #"+systems[i].uid);
-		
-	// 	layer.append(marker);
-		
 
- //        (function(marker, systemUID) {
- //            google.maps.event.addDomListener(marker, 'click', function() {
- //    		   google.maps.event.trigger(me, 'click', systemUID);
- //  		    });	
- //        }(marker[0], systems[i].uid));
-		
-		
-	// }
 	_.each(systems, function(system){
 		var marker = $("#markers #"+system.uid);
 		layer.append(marker);

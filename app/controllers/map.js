@@ -3,82 +3,47 @@
  * GET map
  */
 
- var http = require('https');
+var airvantage = require('../model/airvantage');
+var _ = require('underscore');
+var async = require('async');
 
+exports.get = function(req, resp) {
 
- exports.get = function(pagerequest, pageresponse) {
+    async.parallel({
+         // get all systems
+         systems : airvantage.systems_query({fields : "uid,name,data",access_token : req.session.access_token}),
+         // get all alerts
+         alerts : airvantage.alerts_query({fields : "uid,date,target,acknowledgedAt",access_token : req.session.access_token}) 
+    },
+    function(err, res) {
+        if (err) {
+            console.log("ERR: " + err);
+        } else {
 
-     var systems = [];
+            // count number of not acknowled alerts
+            var alerts_count = _.size(_.reject(res.alerts.items, function(alert){return alert.acknowledgedAt}));
 
-     var options = {
-         host : 'qa-trunk.airvantage.net',
-         path : '/api/v1/systems?fields=uid,name,data&access_token='+pagerequest.session.access_token,
-         method : 'GET'
-     };
-     console.log("System request: " + options.host + options.path);
+            // attach alerts to their system
+            var alerts = _.groupBy(res.alerts.items, 'target');
 
-     var req = http.request(options, function(res) {
-         res.setEncoding('utf8');
-         res.on('data', function(data) {
-            console.log('Systems data: ' + data);
-             data = JSON.parse(data);
-             for ( var i = 0; i < data.items.length; i++) {
-                 systems.push(data.items[i]);
-             }
-
-
-
-
-
-             var options = {
-                 host : 'qa-trunk.airvantage.net',
-                 path : '/api/v1/alerts?fields=uid,date,target,acknowledgedBy&access_token='+pagerequest.session.access_token,
-                 method : 'GET'
-             };
-             console.log('Alerts request: ' + options.host + options.path);
-             http.request(options, function(res) {
-                 res.setEncoding('utf8');
-                 res.on('data', function(data) {
-
-                     console.log( 'Alerts data: ' + data );
-                     data = JSON.parse(data);
-                    // add alert to the system
-                     var alerts_count = 0;
-                    for ( var i = 0; i < data.items.length; i++) {
-                        var alert = data.items[i];
-                        for ( var j = 0; j < systems.length; j++){
-                            if (alert.target === systems[j].uid){
-                                //create alarm node if needed
-                                if (!("alerts" in systems[j])){
-                                    systems[j].alerts = [];
-                                }
-                                systems[j].alerts.push(alert);
-                            }
-                        }
-                        if (!alert.acknowledgedBy){
-                            alerts_count++;
-                        }
-                    }
-
-                    pageresponse.render('map', {
-                        alerts_count: alerts_count,
-                        systems : systems,
-                        active : 'map'
-                    });
+            var systems = _.map(res.systems.items, function(system) {
+                var a = alerts[system.uid];
+                if (a) {
+                    var alerts_count = _.size(_.reject(a, function(alert){return alert.acknowledgedAt}));
                     
-                });
+                    if (alerts_count > 0) system.alerts_count = alerts_count;
 
-             }).on('error', function(e) {
-                 console.log("Unable to get alarms status");
-             }).end();
+                }
+                return system;
+            });
 
-         });
+            // render the page
+            resp.render('map', {
+                alerts_count : alerts_count,
+                systems : systems,
+                active : 'map'
+            });
+        }
     });
-
-    req.on('error', function(e) {
-        console.log('Unable to retreive systems list: ' + e.message);
-    });
-
-    req.end();
 
 };
