@@ -47,6 +47,43 @@ var query_get_ctor = function (host, base, url){
     };
 };
 
+var query_post_ctor = function (host, base, url){
+    return function (params, content){
+        return function (callback){
+            // manage URL path parameters
+            var u = _.reduce(_.pairs(params), function(u, p){return u.replace(":"+p[0], p[1]);}, url);
+            
+            // manage URL query parameters
+            var param_section = _.reduce(_.pairs(params), function(memo, pair){return memo + pair[0] + "=" + pair[1] + "&";}, "?");
+            
+            // define url option
+            var options = {
+                host : host,
+                path : base + u + param_section,
+                method : 'POST',
+                headers: {"Content-Type": "application/json"}
+            };
+
+            // execute the request
+            https.request(options, function(res){
+                res.setEncoding('utf8');
+                res.on('data', function(data){
+                    var err = null, res = null;
+                    try{
+                        res = JSON.parse(data);
+                    }catch(e){
+                        err=e;
+                    }
+                    callback(err,res);
+                });
+            }).on('error', function(e) {
+                callback(e);
+             }).end(content);
+        };
+
+    };
+};
+
 // AirVantage API, see API documentation.
 // ---------------------------------------
 var host = "qa-trunk.airvantage.net";
