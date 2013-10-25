@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="page-header">
-				<h1><%= system.name %> <small class="pull-right"><%= system.uid %></small></h1>
+				<h1><%= system.name %></h1>
 			</div>
 		</div>
 	</div>
@@ -18,22 +18,17 @@
 
 	<div class="row triplegraph">
 		<div class="col-lg-12">
-			<div style="float:left;">
-				<span id="axis0"></span>
+			<div style="float: left;" id="axisContainer">
 				<span id="axis1"></span>
 				<span id="axis2"></span>
+				<span id="axis0"></span>
 			</div>
 			<div style="overflow:hidden;">
-				<div id="chart" class="rickshaw_graph"></div>
+				<div id="chart" class="rickshaw_graph" style="width: 100%;"></div>
 			</div>
 		</div>
 	</div>
-	<!-- <p/>
-	<div class="row">
-		<div class="col-lg-12">
-			<div id="graph"></div>			
-		</div>
-	</div> -->
+
 	
 	<div class="row">
 		<div class="col-lg-12">
@@ -66,38 +61,22 @@
 
 <script type="text/javascript">
 
+var data = [<%- JSON.stringify(system.temperature) %>, <%- JSON.stringify(system.luminosity)%>, <%- JSON.stringify(system.humidity)%>];
+
 var palette = new Rickshaw.Color.Palette();
 
-scales = [];
-
-data = [<%- JSON.stringify(system.temperature) %>, <%- JSON.stringify(system.luminosity)%>, <%- JSON.stringify(system.humidity)%>];
-
-_ref = data[1];
-for (_j = 0, _len = _ref.length; _j < _len; _j++) {
-	point = _ref[_j];
-	point.y *= point.y;
-}
-
-for (_k = 0, _len1 = data.length; _k < _len1; _k++) {
-	series = data[_k];
-	min = Number.MAX_VALUE;
-	max = Number.MIN_VALUE;
-	for (_l = 0, _len2 = series.length; _l < _len2; _l++) {
-		point = series[_l];
-		min = Math.min(min, point.y);
-		max = Math.max(max, point.y);
-	}
-	if (_k === 0) {
-		scales.push(d3.scale.linear().domain([min, max]).nice());
-	} else {
-		scales.push(d3.scale.pow().domain([min, max]).nice());
-	}
-}
+var scales = _.map(data, function(vals){
+	var y = _.pluck(vals, "y");
+	var min = _.min(y);
+	var max = _.max(y);
+	return d3.scale.linear().domain([min, max]).nice();
+});
 
 var graph = new Rickshaw.Graph({
 	element: document.querySelector("#chart"),
 	renderer: 'multi',
-	interpolation: "linear",
+	//interpolation: "linear",
+	width: $("#chart").width() - 129,
 	series: [{
 		name: "Luminosity",
 		data: data[1],
@@ -120,22 +99,10 @@ var graph = new Rickshaw.Graph({
 });
 
 
-var time = new Rickshaw.Fixtures.Time();
+//var time = new Rickshaw.Fixtures.Time();
 
 var xAxis = new Rickshaw.Graph.Axis.Time({
 	graph: graph,
-});
-
-//Temperature
-new Rickshaw.Graph.Axis.Y.Scaled({
-	element: document.getElementById('axis0'),
-	graph: graph,
-	grid: true,
-	orientation: 'left',
-	height : 250,
-	width : 40,
-	scale: scales[0],
-	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
 });
 
 //Luminosity
@@ -159,6 +126,18 @@ new Rickshaw.Graph.Axis.Y.Scaled({
 	height : 250,
 	width : 40,
 	scale: scales[2],
+	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+});
+
+//Temperature
+new Rickshaw.Graph.Axis.Y.Scaled({
+	element: document.getElementById('axis0'),
+	graph: graph,
+	grid: true,
+	orientation: 'left',
+	height : 250,
+	width : 40,
+	scale: scales[0],
 	tickFormat: Rickshaw.Fixtures.Number.formatKMBT
 });
 
