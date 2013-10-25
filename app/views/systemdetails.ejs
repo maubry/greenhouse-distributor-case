@@ -69,6 +69,7 @@ var scales = _.map(data, function(vals){
 	var y = _.pluck(vals, "y");
 	var min = _.min(y);
 	var max = _.max(y);
+	if (min == max){ min = 0; max = max + 10;}
 	return d3.scale.linear().domain([min, max]).nice();
 });
 
