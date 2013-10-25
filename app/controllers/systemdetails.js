@@ -15,9 +15,9 @@ exports.get = function(req, resp) {
         // get system info
         system : airvantage.systems_query({uid: uid, fields : "uid,name", access_token : req.session.access_token}),
         // get last 100 datapoints
-        temperature : airvantage.data_raw_query({uid: uid, path:"greenhouse.temperature", access_token : req.session.access_token}),
-        luminosity  : airvantage.data_raw_query({uid: uid, path:"greenhouse.luminosity", access_token : req.session.access_token}),
-        humidity    : airvantage.data_raw_query({uid: uid, path:"greenhouse.humidity", access_token : req.session.access_token}),
+        temperature : airvantage.data_raw_query({uid: uid, path:"greenhouse.temperature", size: 500, access_token : req.session.access_token}),
+        luminosity  : airvantage.data_raw_query({uid: uid, path:"greenhouse.luminosity", size: 500, access_token : req.session.access_token}),
+        humidity    : airvantage.data_raw_query({uid: uid, path:"greenhouse.humidity", size: 500, access_token : req.session.access_token}),
         // get all alerts
         alerts : airvantage.alerts_query({access_token : req.session.access_token}) 
     },
