@@ -30,14 +30,18 @@ var query_get_ctor = function (host, base, url){
             // execute the request
             https.request(options, function(resp){
                 resp.setEncoding('utf8');
+                var value = "";
                 resp.on('data', function(data){
+                    value = value + data;
+                });
+                resp.on('end', function(){
                     var err = null, res = null;
                     if (resp.statusCode != 200){
                         err="Status Code " + resp.statusCode
                         callback(err,res);
                     } else {
                         try{
-                            res = JSON.parse(data);
+                            res = JSON.parse(value);
                         }catch(e){
                             err=e;
                         }
@@ -73,14 +77,18 @@ var query_post_ctor = function (host, base, url){
             // execute the request
             https.request(options, function(resp){
                 resp.setEncoding('utf8');
+                var value = "";
                 resp.on('data', function(data){
+                    value = value + data;
+                });
+                resp.on('end', function(){
                     var err = null, res = null;
                     if (resp.statusCode != 200){
                         err="Status Code " + resp.statusCode
                         callback(err,res);
                     } else {
                         try{
-                            res = JSON.parse(data);
+                            res = JSON.parse(value);
                         }catch(e){
                             err=e;
                         }
