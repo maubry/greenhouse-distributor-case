@@ -19,17 +19,17 @@ exports.get = function(req, resp) {
                  airvantage.systems_query({fields : "uid,name,lastCommDate",access_token : req.session.access_token}),
                  function(systems, callback){
                      async.map(systems.items, function(system, cb){                         
-                         airvantage.data_query({uid : system.uid, ids : "greenhouse.data.temperature,greenhouse.data.luminosity,greenhouse.data.humidity", access_token : req.session.access_token})
+                         airvantage.data_query({uid : system.uid, ids : "greenhouse.temperature,greenhouse.luminosity,greenhouse.humidity", access_token : req.session.access_token})
                              (function(err, data) {
                                 if (data) {
-                                    if ("greenhouse.data.temperature" in data && data["greenhouse.data.temperature"] !== null) {
-                                        system.temperature = data["greenhouse.data.temperature"][0].value;
+                                    if ("greenhouse.temperature" in data && data["greenhouse.temperature"] !== null) {
+                                        system.temperature = data["greenhouse.temperature"][0].value;
                                     }
-                                    if ("greenhouse.data.luminosity" in data && data["greenhouse.data.luminosity"] !== null) {
-                                        system.luminosity = data["greenhouse.data.luminosity"][0].value;
+                                    if ("greenhouse.luminosity" in data && data["greenhouse.luminosity"] !== null) {
+                                        system.luminosity = data["greenhouse.luminosity"][0].value;
                                     }
-                                    if ("greenhouse.data.humidity" in data && data["greenhouse.data.humidity"] !== null) {
-                                        system.humidity = data["greenhouse.data.humidity"][0].value;
+                                    if ("greenhouse.humidity" in data && data["greenhouse.humidity"] !== null) {
+                                        system.humidity = data["greenhouse.humidity"][0].value;
                                     };
                                 }
                                 console.log(system);

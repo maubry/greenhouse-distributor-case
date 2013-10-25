@@ -102,7 +102,7 @@ var query_post_ctor = function (host, base, url){
 
 // AirVantage API, see API documentation.
 // ---------------------------------------
-var host = "qa-trunk.airvantage.net";
+var host = "na.airvantage.net";
 var apiurl = "/api/v1/";
 var authurl = "/api/oauth/";
 
