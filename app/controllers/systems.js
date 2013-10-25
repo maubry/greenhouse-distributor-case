@@ -45,6 +45,7 @@ exports.get = function(req, resp) {
     function(err, res) {
         if (err) {
             console.log("ERR: " + err);
+            next(err);
         } else {
 
             // count number of not acknowled alerts
