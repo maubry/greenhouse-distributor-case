@@ -40,7 +40,7 @@ exports.get = function(req, resp) {
             system.humidity    = _.sortBy(_.map(res.humidity, convert), function(val){return val.x});
 
             // render the page
-            resp.render('systemDetails', {
+            resp.render('systemdetails', {
                 alerts_count : alerts_count,
                 system : system,
                 redirect: req.originalUrl,
