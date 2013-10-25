@@ -26,22 +26,28 @@ var query_get_ctor = function (host, base, url){
                 path : base + u + param_section,
                 method : 'GET'
             };
-
+            console.log("GET REQ: " + host + base + u + param_section);
             // execute the request
-            https.request(options, function(res){
-                res.setEncoding('utf8');
-                res.on('data', function(data){
+            https.request(options, function(resp){
+                resp.setEncoding('utf8');
+                resp.on('data', function(data){
                     var err = null, res = null;
-                    try{
-                        res = JSON.parse(data);
-                    }catch(e){
-                        err=e;
+                    if (resp.statusCode != 200){
+                        err="Status Code " + resp.statusCode
+                        callback(err,res);
+                    } else {
+                        try{
+                            res = JSON.parse(data);
+                        }catch(e){
+                            err=e;
+                        }
+                        callback(err,res);
                     }
-                    callback(err,res);
+                    
                 });
             }).on('error', function(e) {
                 callback(e);
-             }).end();
+            }).end();
         };
 
     };
@@ -63,46 +69,64 @@ var query_post_ctor = function (host, base, url){
                 method : 'POST',
                 headers: {"Content-Type": "application/json"}
             };
-
+            console.log("POST REQ: " + host + base + u + param_section);
             // execute the request
-            https.request(options, function(res){
-                res.setEncoding('utf8');
-                res.on('data', function(data){
+            https.request(options, function(resp){
+                resp.setEncoding('utf8');
+                resp.on('data', function(data){
                     var err = null, res = null;
-                    try{
-                        res = JSON.parse(data);
-                    }catch(e){
-                        err=e;
+                    if (resp.statusCode != 200){
+                        err="Status Code " + resp.statusCode
+                        callback(err,res);
+                    } else {
+                        try{
+                            res = JSON.parse(data);
+                        }catch(e){
+                            err=e;
+                        }
+                        callback(err,res);
                     }
-                    callback(err,res);
+                    
                 });
             }).on('error', function(e) {
                 callback(e);
-             }).end(content);
+            }).end(content);
         };
 
     };
 };
 
+
+
+
+
 // AirVantage API, see API documentation.
 // ---------------------------------------
 var host = "qa-trunk.airvantage.net";
-var baseurl = "/api/v1/";
+var apiurl = "/api/v1/";
+var authurl = "/api/oauth/";
+
+
+
+
 
 /** Get all systems */
-exports.systems_query = query_get_ctor(host, baseurl, "systems");
+exports.systems_query = query_get_ctor(host, apiurl, "systems");
 
 /** Get all alert */
-exports.alerts_query = query_get_ctor(host, baseurl, "alerts");
+exports.alerts_query = query_get_ctor(host, apiurl, "alerts");
 
 /** Acknowledge an alert */
-exports.alerts_ack = query_post_ctor(host, baseurl, "alerts/:uid/acknowledge");
+exports.alerts_ack = query_post_ctor(host, apiurl, "alerts/:uid/acknowledge");
 
 /** Get last data of a system */
-exports.data_query = query_get_ctor(host, baseurl, "systems/:uid/data");
+exports.data_query = query_get_ctor(host, apiurl, "systems/:uid/data");
 
 /** Get raw datapoints of a system */
-exports.data_raw_query = query_get_ctor(host, baseurl, "systems/:uid/data/:path/raw");
+exports.data_raw_query = query_get_ctor(host, apiurl, "systems/:uid/data/:path/raw");
+
+/** Get access token */
+exports.token_query = query_get_ctor(host, authurl, "token");
 
 
 
