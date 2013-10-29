@@ -6,41 +6,49 @@ eclo watch is sample web application that aims to show how to use Sierra Wireles
 Scenario
 ----------------------------
 
-A company, eclo inc, that sells greenhouse monitoring equipement, wants to provide its customers with an online service to monitor their equiped greenhouses remotely. In order to reduce development time eclo inc has decided to use AirVantage Enterprise Platform as a backend for their own service. Indeed AirVantage Enterprise Plateform will provide the services to manage communicating devices, embedded applications, alert generation rules, data sent by the greenhouses and users from customer companies. As the AirVanatage UI is dedicated to manage M2M issues and not greenhouse monitoring ones, eclo inc will provide these users with a dedicated one, hosted on their own servers and relying in the background on AirVanatage API in order to perform the heavy lifting. 
+A company, eclo inc, that sells greenhouse monitoring equipements, wants to provide its customers with an online service to monitor their greenhouses remotely. In order to reduce development time, eclo inc has decided to use AirVantage Enterprise Platform as a backend for their own service. 
+
+AirVantage will provide the services to manage communicating devices, embedded applications, alert generation rules, data sent by the greenhouses and users from customer companies. As the AirVanatage UI is dedicated to manage M2M issues and not greenhouse monitoring ones, eclo inc will provide these users with a dedicated UI, hosted on their own servers and relying in the background on AirVanatage API in order to perform the heavy lifting. 
 
 
 Features
 ---------------------------
 
-You can find a live demo of this dedicated service hosted on Amazon Elastic Beanstalk at the folowing URL: [http://eclowatch.elasticbeanstalk.com/](http://eclowatch.elasticbeanstalk.com/). It may help to understand the features provided by this sample web application.
+You can find a live demo of this dedicated service hosted on Amazon Elastic Beanstalk at the folowing URL: [http://eclowatch.elasticbeanstalk.com/](http://eclowatch.elasticbeanstalk.com/).
 You have to sign in with the folowing user (representing a customer of eclo inc company):
 * username: userA1@customerA.com
 * password: eclo-pass1
 
 ### User login
 
-This part show how to use AirVantage user management and authentication system in your application. It relies on https://na.airvantage/api/auth API and the [OAuth2](http://oauth.net/) protocol. So in this example user accounts management is completly delegated and the web app just hand over user credentials to AirVanatage. The web app gets back an access token that repersents the user session and shall be used to perform request to AirVantage API in the name of the user (i.e. with the same right and visibility, the user would have if she were logged in AirVantage UI). 
+This part shows how to use AirVantage user management and authentication system in your application. It relies on https://na.airvantage/api/auth API and the [OAuth2](http://oauth.net/) protocol. In this example user accounts management is completly delegated and the web app just hand over user credentials to AirVanatage. It gets back an access token that repersents the user session and shall be used to perform requests to AirVantage API in the name of the user (i.e. with the same right and visibility, the user would have if she were logged in AirVantage UI). 
 
 
 ### Business oriented presentation of the systems
 
-This part of the application aims to show systems (connected greenhouses) in a domain specific view. Indeed it mixes device management information (last communication date) from the system API, with business data sent by the system (last values of the sensors) from the data part of the system API and information about the ongoing alerts (unacknolwedged alerts) from the alert API
+This part of the application aims to show systems (connected greenhouses) in a domain specific view. Indeed it mixes:
+* device management information (last communication date) from the system API
+* business data sent by the system (last values of the sensors) from the data part of the system API
+* information about the ongoing alerts (unacknolwedged alerts) from the alert API
 
 The system details view also adds a graph built thanks to the historical data API, enabling to monitor the evolution of the sensor values.
 
 ### Geographical presentation of the systems
 
-This view shows how to mix location information provided by the system API with a customized map built on top of the Google Maps API.
+This view shows how to use location information provided by the system API in a customized map built on top of the Google Maps API.
 
 ### Focus on alerts
 
-Throughout the application you have information about the ongoing alerts on the fleet of system: in the nav bar their is a badge showing unaknowledge alerts, several view display alert filster according differnet criteria (system, acknowledge status, ...) and both the alerts view and system view show how to acknowledge alerts.
+Throughout the application the user have information about the ongoing alerts about the greenhouses: 
+* in the nav bar their is a badge showing unaknowledge alerts
+* several view display alert filster according differnet criteria (system, acknowledge status, ...)
+* both the alerts view and system view show how to acknowledge alerts.
 
 
 Code
 ---------------------------
 
-For the sake of simplicity all pages are generated on the server side and no ajax request are performed.
+For the sake of simplicity all pages are generated on the server side and no ajax request are performed on the client side.
 
 ### Used projects:
 
@@ -63,11 +71,12 @@ Client side:
 
 #### Routes
 
-The app.js file shows how the rounting of incomming request is done thanks to the Express library and how middlewear are used to perform generic tasks (logging, body parsing, ...) on specific routes. These routes serves either static resources or application page. In this case they call the dedicated controller after going through the aut.check midlewear which verifies that the user is actually logged in.
+The app.js file shows how the rounting of incomming requests is done thanks to the Express library and how middlewears are used to perform generic tasks (logging, body parsing, ...). These routes serves either static resources or application page. In this case they call the dedicated controller after going through the aut.check midlewear which verifies that the user is actually logged in.
 
 #### Model
 
-The model directory contain the airvantage.js file that manage the creation of REST requests to AirVanatage. Two constructor functions are used to abstract away the management of the http queries (error management, parsing of the response, ...). The various requests needed in the application are then built thanks to these functions. These requests are themselves function that takes the parameters of the actual request performed in the controllers. They are designed to work well with the asyncjs libraries that helps to manage aggregation of REST requests.
+The model directory contain the airvantage.js file that manage the creation of REST requests to AirVanatage. 
+Two constructor functions are used to abstract away the management of the http queries (error management, parsing of the response, ...). The various requests needed in the application are then built thanks to these functions. These requests are themselves functions that will be called in the controller with the parameters of the actual request. They are designed to work well with the asyncjs libraries that helps to manage aggregation of REST requests.
 
 #### Controller
 
@@ -105,7 +114,7 @@ Setup
 
 ### Run it
 
-Run server on the port 3000 : `$ node server 3000`
+Run server on the port 3000 : `$ node app.js 3000`
 
 ### Test it
 Open http://localhost:3000 and sign in with your AirVanatage account
