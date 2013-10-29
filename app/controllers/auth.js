@@ -9,8 +9,8 @@ var async = require('async');
 
 // API credentials
 // ---------------------------
-var client_id = "b25ab7229ec946dfb4f2d663dd31706f";
-var client_secret = "bd455d1898a745029efdc854c103f60e";
+var client_id = "MY_CLIENT_ID";
+var client_secret = "MY_CLIENT_SECRET";
 
 /**
  * Manage login/authentication Redirect on login page if there aren't access_token in current session
