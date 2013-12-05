@@ -5,101 +5,76 @@
 		<div class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-body" style="padding: 0px;">
-					<div id="map-canvas" style="height: 800px;"></div>
+					<div style="height: 700px" id="map"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div hidden>
-	<div id="markers">
-		<% for(var i=0; i<systems.length; i++) { %>
-		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
-			<circle r="7" cx="10" cy="10" style="fill: <%= systems[i].alerts_count ? '#d9534f' : '#5cb85c' %>;"/>
-			<text x="7" y="11" dy=".28em" style="fill: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].alerts_count || '' %></text>
-			<text x="19" y="10" dy=".31em" style="fill: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><a href="#"><%= systems[i].name %></a></text>
-		</svg>
-		<% } %>
-	</div>
-</div>
+<script src="/openlayers/lib/OpenLayers.js"></script>
 
+<script defer="defer" type="text/javascript">
+    try {
+        // Define styling for marker
+        var bluemarker = '/img/marker-blue.png'
+        var redmarker = '/img/marker-red.png'
+        var systemslayer = new OpenLayers.Layer.Vector('Overlay', {
+            styleMap : new OpenLayers.StyleMap({
+                externalGraphic : '${marker}',
+                graphicWidth : 25,
+                graphicHeight : 41,
+                graphicYOffset : -41,
+                title : '${tooltip}',
+                cursor : 'pointer'
+            }),
+        });
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdutCfjSUWBijyebze1ZoTzAhapZugD6Y&sensor=false"></script>
+        // Get all systems
+        var systems = <%- JSON.stringify(systems) %>;
 
-<script type="text/javascript">
+        // Add 1 feature (graphic marker in our case) for each systems
+        var features = new Array();
+        for (var i = 0; i < systems.length; i++) {
+            // get position
+            var lon = parseFloat(systems[i].data.longitude)
+            var lat = parseFloat(systems[i].data.latitude)
+            // translate from lat/lon system to Spherical Mercator (see http://docs.openlayers.org/library/spherical_mercator.html)          
+            var mylocation = new OpenLayers.Geometry.Point(lon, lat).transform('EPSG:4326', 'EPSG:3857');
+            // define marker color
+            var marker = systems[i].alerts_count ? redmarker : bluemarker;
+            // add feature(system to layer)
+            features[i] = new OpenLayers.Feature.Vector(mylocation, {
+                tooltip : systems[i].name,
+                marker : marker,
+                url : 'systems/details?uid=' + systems[i].uid
+            });
+        }
+        systemslayer.addFeatures(features);
 
-var systems = <%- JSON.stringify(systems) %>;
+        // Finally we create the map
+        map = new OpenLayers.Map({
+            div : "map",
+            layers : [ new OpenLayers.Layer.OSM(), systemslayer ]
+        });
 
-var bound = new google.maps.LatLngBounds();
+        // auto zoom and center
+        map.zoomToExtent(systemslayer.getDataExtent());
 
-for (i = 0; i < systems.length; i++) {
-  bound.extend( new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude) );
-}
-
-var mapOptions = {
-	mapTypeId: google.maps.MapTypeId.ROADMAP,
-	streetViewControl: false,
-	mapTypeControl: false,
-	styles: [
-	{
-		stylers: [
-		{ saturation: -100 },
-		{ lightness: 30 }
-		]
-	},{
-		featureType: "road",
-		elementType: "geometry",
-		stylers: [
-		{ lightness: 70 },
-		{ visibility: "simplified" }
-		]
-	},{
-		featureType: "road",
-		elementType: "labels",
-		stylers: [
-		{ visibility: "simplified" }
-		]
-	}
-	]
-};
-
-var map = new google.maps.Map($("#map-canvas")[0], mapOptions);
-
-map.fitBounds(bound)
-
-var overlay = new google.maps.OverlayView();
-
-var layer
-
-overlay.onAdd = function() {
-	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
-	layer = $("#greenhouseContainers").css("position", "absolute");
-	var me = this;
-
-	_.each(systems, function(system){
-		var marker = $("#markers #"+system.uid);
-		layer.append(marker);
-		google.maps.event.addDomListener(marker[0], 'click', function() {
-    		google.maps.event.trigger(me, 'click', system.uid);
-   		});	
-	});
-}
-
-overlay.draw = function() {
-	var projection = this.getProjection();
-	var d 
-	for(var i=0; i<systems.length; i++) {
-		d = new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude);
-		d = projection.fromLatLngToDivPixel(d);
-		$("#"+systems[i].uid).css("left", (d.x - 10) + "px").css("top", (d.y - 10) + "px")
-	}
-};
-
-google.maps.event.addListener(overlay, 'click', function(systemUID){window.location.href = "/systems/details?uid="+systemUID;});
-
-overlay.setMap(map);
-
+        // define listener on feature(systems) selection.
+        selectControl = new OpenLayers.Control.SelectFeature(systemslayer);
+        map.addControl(selectControl);
+        selectControl.activate();
+        systemslayer.events.on({
+            featureselected : function(evt) {
+                window.location.href = evt.feature.attributes.url
+                // COMESTIC HACK to avoid to see broken image in google chrome 
+                document.getElementById('map').style.visibility='hidden';
+            }
+        });
+    } catch (err) {
+        console.error(err)
+    }
 </script>
 
 <%- include footer.ejs %>
