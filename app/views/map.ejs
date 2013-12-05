@@ -1,105 +1,71 @@
 <%- include header.ejs %>
+<link rel="stylesheet"
+	href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+<!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+ <![endif]-->
 
 <div class="container">
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-body" style="padding: 0px;">
-					<div id="map-canvas" style="height: 800px;"></div>
+					<div style="height: 700px" id="map"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div hidden>
-	<div id="markers">
-		<% for(var i=0; i<systems.length; i++) { %>
-		<svg id=<%= systems[i].uid %> style="width: 120px; height: 20px; position: absolute;">
-			<circle r="7" cx="10" cy="10" style="fill: <%= systems[i].alerts_count ? '#d9534f' : '#5cb85c' %>;"/>
-			<text x="7" y="11" dy=".28em" style="fill: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><%= systems[i].alerts_count || '' %></text>
-			<text x="19" y="10" dy=".31em" style="fill: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"><a href="#"><%= systems[i].name %></a></text>
-		</svg>
-		<% } %>
-	</div>
-</div>
+<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 
+<script defer="defer" type="text/javascript">
+    try {
+        //Use default blue icon for system which is not in alert
+        var blueIcon = new L.Icon.Default();
+        //Define red icon for system in alert from default icon
+        var RedIcon = L.Icon.Default.extend({
+            options : {
+                iconUrl : '/img/marker-icon-red.png'
+            }
+        });
+        var redIcon = new RedIcon();
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdutCfjSUWBijyebze1ZoTzAhapZugD6Y&sensor=false"></script>
+        //Create the map
+        var map = L.map('map');
 
-<script type="text/javascript">
+        //Define default map layer (we use opentreetmap but cloudmade, mapquest ... could be used)
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution : 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors.',
+            maxZoom : 18
+        }).addTo(map);
 
-var systems = <%- JSON.stringify(systems) %>;
+        // Get all systems
+        var systems = <%- JSON.stringify(systems) %>;
 
-var bound = new google.maps.LatLngBounds();
+        // Add 1 marker for each systems
+        var markers = new Array();
+        for (var i = 0; i < systems.length; i++) {
+            // get position
+            var lon = parseFloat(systems[i].data.longitude)
+            var lat = parseFloat(systems[i].data.latitude)
+            // define icon color from alert state
+            var icon = systems[i].alerts_count ? redIcon : blueIcon;
+            markers[i] = L.marker([ lat, lon ], {
+                icon : icon,
+                title : systems[i].name,
+                url : 'systems/details?uid=' + systems[i].uid
+            }).on('click', function(e) {
+                window.location.href = e.target.options.url;
+            });            
+        }
+        var systemsfeaturegroup = L.featureGroup(markers).addTo(map)
 
-for (i = 0; i < systems.length; i++) {
-  bound.extend( new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude) );
-}
-
-var mapOptions = {
-	mapTypeId: google.maps.MapTypeId.ROADMAP,
-	streetViewControl: false,
-	mapTypeControl: false,
-	styles: [
-	{
-		stylers: [
-		{ saturation: -100 },
-		{ lightness: 30 }
-		]
-	},{
-		featureType: "road",
-		elementType: "geometry",
-		stylers: [
-		{ lightness: 70 },
-		{ visibility: "simplified" }
-		]
-	},{
-		featureType: "road",
-		elementType: "labels",
-		stylers: [
-		{ visibility: "simplified" }
-		]
-	}
-	]
-};
-
-var map = new google.maps.Map($("#map-canvas")[0], mapOptions);
-
-map.fitBounds(bound)
-
-var overlay = new google.maps.OverlayView();
-
-var layer
-
-overlay.onAdd = function() {
-	$(this.getPanes().overlayLayer).append("<div id=\"greenhouseContainers\"></div>");
-	layer = $("#greenhouseContainers").css("position", "absolute");
-	var me = this;
-
-	_.each(systems, function(system){
-		var marker = $("#markers #"+system.uid);
-		layer.append(marker);
-		google.maps.event.addDomListener(marker[0], 'click', function() {
-    		google.maps.event.trigger(me, 'click', system.uid);
-   		});	
-	});
-}
-
-overlay.draw = function() {
-	var projection = this.getProjection();
-	var d 
-	for(var i=0; i<systems.length; i++) {
-		d = new google.maps.LatLng(systems[i].data.latitude, systems[i].data.longitude);
-		d = projection.fromLatLngToDivPixel(d);
-		$("#"+systems[i].uid).css("left", (d.x - 10) + "px").css("top", (d.y - 10) + "px")
-	}
-};
-
-google.maps.event.addListener(overlay, 'click', function(systemUID){window.location.href = "/systems/details?uid="+systemUID;});
-
-overlay.setMap(map);
-
+        // autozoom / auto center on systems
+        map.fitBounds(systemsfeaturegroup.getBounds())
+    } catch (err) {
+        console.error(err)
+    }
 </script>
 
 <%- include footer.ejs %>
